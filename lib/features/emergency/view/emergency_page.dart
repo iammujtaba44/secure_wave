@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
+import 'package:provider/provider.dart';
 import 'package:secure_wave/features/emergency/view/tabs/alert_tab.dart';
 import 'package:secure_wave/features/emergency/view/tabs/faq_tab.dart';
 import 'package:secure_wave/features/emergency/view/tabs/notifications_tab.dart';
+import 'package:secure_wave/providers/app_status_provider/app_status_provider.dart';
 
 @RoutePage()
 class EmergencyPage extends StatelessWidget {
@@ -36,6 +40,7 @@ class EmergencyPage extends StatelessWidget {
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white70,
               indicatorColor: Colors.white,
+              indicatorSize: TabBarIndicatorSize.tab,
             ),
             automaticallyImplyLeading: false,
           ),

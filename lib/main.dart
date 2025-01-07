@@ -162,28 +162,33 @@ import 'package:device_admin_manager/device_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/features/emergency/view/emergency_page.dart';
 import 'package:secure_wave/lock_screen.dart';
 import 'package:secure_wave/providers/app_providers.dart';
 import 'package:secure_wave/features/home/views/home_page.dart';
+import 'package:secure_wave/providers/app_status_provider/app_status_provider.dart';
+import 'package:secure_wave/providers/database_provider.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/services/locator_service.dart';
 
 import 'task_actions.dart';
 
 /// [Note] Testing as admin
-// adb shell dpm set-device-owner com.infinite_binary.secure_wave/com.ib.device_admin_manager.AppDeviceAdminReceiver
+// adb shell dpm set-device-owner com.ib.secure/com.ib.device_admin_manager.AppDeviceAdminReceiver
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  LocatorService.setup();
-  await Firebase.initializeApp();
+  await const LocatorService().setup();
 
   initKioskMode();
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider.value(value: locator.get<ScreenAwakeProvider>()),
       ChangeNotifierProvider(create: (_) => LockProvider(dam: locator.get())),
+      ChangeNotifierProvider(create: (_) => DatabaseProvider(dbService: locator.get())),
+      ChangeNotifierProvider.value(value: locator.get<EmergencyProvider>()),
+      ChangeNotifierProvider(create: (_) => AppStatusProvider(locator.get(), locator.get())),
     ],
     child: const MyApp(),
   ));
@@ -241,6 +246,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<AppStatusProvider>().currentStatus;
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerDelegate: locator.get<AppRouter>().delegate(),

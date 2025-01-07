@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyD3ImEjqfn8JE4Vb125d5hQEwFmvrlohN0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>198077290399</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.secureWave</string>
+	<key>PROJECT_ID</key>
+	<string>ims-tracking-ad08f</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ims-tracking-ad08f.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:198077290399:ios:edf139ec6272c303810faa</string>
+	<key>DATABASE_URL</key>
+	<string>https://ims-tracking-ad08f-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

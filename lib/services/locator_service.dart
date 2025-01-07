@@ -1,23 +1,77 @@
 import 'package:device_admin_manager/device_manager.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart' show GlobalKey, NavigatorState, ScaffoldMessengerState;
 import 'package:get_it/get_it.dart';
+import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
+import 'package:secure_wave/firebase_options.dart';
 import 'package:secure_wave/providers/app_providers.dart';
 import 'package:secure_wave/routes/app_routes.dart';
+import 'package:secure_wave/services/background_service/background_service.dart';
+import 'package:secure_wave/services/database_service/database_service.dart';
+import 'package:secure_wave/services/database_service/i_database_service.dart';
 
 final locator = GetIt.instance;
 
-abstract class LocatorService {
-  static void setup() {
-    locator.registerLazySingleton<DeviceAdminManager>(() => DeviceAdminManager.instance);
+sealed class ILocatorService {
+  Future<void> setup();
+}
 
-    _setupProviders();
+class LocatorService implements ILocatorService {
+  const LocatorService();
+  @override
+  Future<void> setup() async {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     _registerRouters();
+    _setupServices();
+    _setupProviders();
+
+    locator.get<EmergencyProvider>()
+      ..getSupportContact()
+      ..getFAQ();
+    // locator.get<IDatabaseService>().setData('FAQ', {
+    //   'questions': [
+    //     {
+    //       'title': 'Why is my device locked?',
+    //       'description':
+    //           'Your device is locked due to overdue payment. Once payment is made, your device will be automatically unlocked.'
+    //     },
+    //     {
+    //       'title': 'How can I make a payment?',
+    //       'description':
+    //           'You can make a payment using the "Make Payment Now" button on the Alert tab, or contact our support team for assistance.'
+    //     },
+    //     {
+    //       'title': 'What happens after I pay?',
+    //       'description':
+    //           'Your device will be automatically unlocked within 24 hours of payment confirmation.'
+    //     },
+    //     {
+    //       'title': 'Can I get an extension?',
+    //       'description':
+    //           'Please contact our support team to discuss payment arrangements and possible extensions.'
+    //     }
+    //   ]
+    // });
+
+    // locator.get<BackgroundService>().initializeBackgroundService();
+  }
+
+  static void _setupServices() {
+    locator.registerLazySingleton<DeviceAdminManager>(() => DeviceAdminManager.instance);
+    locator.registerLazySingleton<IDatabaseService>(() => DatabaseService());
+    locator.registerLazySingleton<BackgroundService>(() => BackgroundService());
   }
 
   static void _setupProviders() {
     locator.registerLazySingleton<ScreenAwakeProvider>(
       () => ScreenAwakeProvider(
         dam: locator.get(),
+      ),
+    );
+
+    locator.registerLazySingleton<EmergencyProvider>(
+      () => EmergencyProvider(
+        databaseService: locator.get(),
       ),
     );
   }

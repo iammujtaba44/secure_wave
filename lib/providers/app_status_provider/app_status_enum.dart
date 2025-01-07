@@ -1,0 +1,47 @@
+enum AppStatus {
+  lockDevice,
+  lock,
+  unlock,
+  disabled,
+  maintenance,
+  restricted,
+  wipe,
+  idle;
+
+  static AppStatus fromString(String status) {
+    return AppStatus.values.firstWhere(
+      (e) => e.name.toLowerCase() == status.toLowerCase(),
+      orElse: () => AppStatus.idle,
+    );
+  }
+
+  String get message {
+    switch (this) {
+      case AppStatus.lock:
+        return 'App is locked for security reasons';
+      case AppStatus.lockDevice:
+        return 'Device is locked for security reasons';
+      case AppStatus.unlock:
+        return 'App is unlocked and fully functional';
+      case AppStatus.disabled:
+        return 'App is temporarily disabled';
+      case AppStatus.maintenance:
+        return 'App is under maintenance';
+      case AppStatus.restricted:
+        return 'App access is restricted';
+      case AppStatus.wipe:
+        return 'Device is being wiped';
+      case AppStatus.idle:
+        return 'App is up and running';
+    }
+  }
+
+  bool get shouldBlockAccess {
+    return this == AppStatus.lock ||
+        this == AppStatus.disabled ||
+        this == AppStatus.maintenance ||
+        this == AppStatus.wipe;
+  }
+
+  bool get isLockDevice => this == AppStatus.lockDevice;
+}

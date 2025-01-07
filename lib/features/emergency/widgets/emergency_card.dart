@@ -2,7 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 class EmergencyCard extends StatelessWidget {
-  const EmergencyCard({super.key});
+  const EmergencyCard({super.key, required this.title, required this.description});
+  final String title;
+  final String description;
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +16,12 @@ class EmergencyCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
                 Icon(Icons.warning_amber_rounded, color: Colors.red, size: 32),
                 SizedBox(width: 8),
                 Text(
-                  'PAYMENT OVERDUE',
+                  title,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -29,9 +31,9 @@ class EmergencyCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Your device has been locked due to overdue payment:',
-              style: TextStyle(fontSize: 16),
+            Text(
+              '$description : ',
+              style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 8),
             _buildAmountInfo(),

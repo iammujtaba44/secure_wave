@@ -1,15 +1,15 @@
 plugins {
-    id "com.android.application"
-    id "kotlin-android"
+    id 'com.android.application'
+    id 'kotlin-android'
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
-    id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"
+    id 'dev.flutter.flutter-gradle-plugin'
+    id 'com.google.gms.google-services'
 
 }
 
 android {
-    namespace = "com.infinite_binary.secure_wave"
-    compileSdk = flutter.compileSdkVersion
+    namespace = "com.ib.secure"
+    compileSdk = 34 //flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -23,11 +23,11 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.infinite_binary.secure_wave"
+        applicationId = "com.ib.secure"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 23//flutter.minSdkVersion
+        targetSdk = 34//flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -41,23 +41,17 @@ android {
     }
 }
 dependencies {
-  implementation platform('com.google.firebase:firebase-bom:32.0.0')
-  implementation 'com.google.firebase:firebase-analytics'
-  implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
-  implementation 'com.android.installreferrer:installreferrer:2.2'
-  implementation "com.google.firebase:firebase-core:21.1.1"
-  implementation "com.google.firebase:firebase-messaging"
-  implementation 'com.android.support:multidex:2.0.0'
-  implementation 'com.google.android.gms:play-services-maps:+'
- 
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
 
 flutter {
     source = "../.."
 }
 
-afterEvaluate {
-    tasks.matching { it.name == "mapDebugSourceSetPaths" }.configureEach {
-        it.dependsOn tasks.named("processDebugGoogleServices")
-    }
-}
+// afterEvaluate {
+//     tasks.matching { it.name == "mapDebugSourceSetPaths" }.configureEach {
+//         it.dependsOn tasks.named("processDebugGoogleServices")
+//     }
+// }

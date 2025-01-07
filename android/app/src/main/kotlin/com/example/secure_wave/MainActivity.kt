@@ -1,11 +1,11 @@
-package com.infinite_binary.secure_wave
+package com.ib.secure
 import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity: FlutterActivity()
 
 
 
-// package com.infinite_binary.secure_wave
+// package com.ib.secure
 
 // import io.flutter.embedding.android.FlutterActivity
 // import android.app.admin.DevicePolicyManager
