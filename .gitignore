@@ -48,3 +48,6 @@ lib/firebase_options.dart
 
 # FVM Version Cache
 .fvm/
+
+# Admin Test
+.admin_test.dart

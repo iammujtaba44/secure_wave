@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:secure_wave/services/database_service/i_database_service.dart';
+import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 
 class DatabaseProvider extends ChangeNotifier {
   final IDatabaseService _dbService;

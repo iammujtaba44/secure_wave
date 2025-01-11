@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:secure_wave/routes/app_routes.dart';
-import 'package:secure_wave/services/database_service/i_database_service.dart';
-import 'package:secure_wave/services/locator_service.dart';
+import 'package:secure_wave/core/services/database_service/i_database_service.dart';
+import 'package:secure_wave/core/services/locator_service.dart';
 
 @RoutePage()
 class HomePage extends StatelessWidget {

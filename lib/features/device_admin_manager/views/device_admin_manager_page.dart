@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/features/actions/policy_actions.dart';
-import 'package:secure_wave/providers/app_providers.dart';
+import 'package:secure_wave/core/providers/app_providers.dart';
 import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
 
 @RoutePage()

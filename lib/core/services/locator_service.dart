@@ -4,11 +4,11 @@ import 'package:flutter/material.dart' show GlobalKey, NavigatorState, ScaffoldM
 import 'package:get_it/get_it.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/firebase_options.dart';
-import 'package:secure_wave/providers/app_providers.dart';
+import 'package:secure_wave/core/providers/app_providers.dart';
 import 'package:secure_wave/routes/app_routes.dart';
-import 'package:secure_wave/services/background_service/background_service.dart';
-import 'package:secure_wave/services/database_service/database_service.dart';
-import 'package:secure_wave/services/database_service/i_database_service.dart';
+import 'package:secure_wave/core/services/background_service/background_service.dart';
+import 'package:secure_wave/core/services/database_service/database_service.dart';
+import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 
 final locator = GetIt.instance;
 
@@ -29,7 +29,7 @@ class LocatorService implements ILocatorService {
       ..getSupportContact()
       ..getFAQ();
 
-    locator.get<BackgroundService>().initializeBackgroundService();
+    //locator.get<BackgroundService>().initializeBackgroundService();
   }
 
   static void _setupServices() {

@@ -5,7 +5,7 @@ import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/features/emergency/widgets/emergency_card.dart';
-import 'package:secure_wave/services/locator_service.dart';
+import 'package:secure_wave/core/services/locator_service.dart';
 
 class AlertTab extends StatelessWidget {
   const AlertTab({super.key});

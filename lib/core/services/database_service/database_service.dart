@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:secure_wave/services/database_service/i_database_service.dart';
+import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 
 class DatabaseService implements IDatabaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;

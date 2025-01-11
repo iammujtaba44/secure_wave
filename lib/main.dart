@@ -162,14 +162,11 @@ import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
-import 'package:secure_wave/providers/app_providers.dart';
-import 'package:secure_wave/providers/app_status_provider/app_status_provider.dart';
-import 'package:secure_wave/providers/database_provider.dart';
+import 'package:secure_wave/core/providers/app_providers.dart';
+import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
+import 'package:secure_wave/core/providers/database_provider.dart';
 import 'package:secure_wave/routes/app_routes.dart';
-import 'package:secure_wave/services/locator_service.dart';
-
-/// [Note] Testing as admin
-// adb shell dpm set-device-owner com.ib.secure/com.ib.device_admin_manager.AppDeviceAdminReceiver
+import 'package:secure_wave/core/services/locator_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -213,12 +210,12 @@ Future<void> initKioskMode() async {
       try {
         await locator.get<DeviceAdminManager>().startApp();
       } catch (e) {
-        print('dpc:: handleBootCompleted startApp error: $e');
+        print('dam:: handleBootCompleted startApp error: $e');
       }
     }
 
     // It's important to highlight that if handleBootCompleted was called
-    // earlier, dpc.startApp() could make Flutter engine reset (or invalidate)
+    // earlier, dam.startApp() could make Flutter engine reset (or invalidate)
     // the code to its initial entry point "main".
     // As a result, there's a high probability that the subsequent
     // (next) code lines won't execute as expected.
@@ -228,7 +225,7 @@ Future<void> initKioskMode() async {
 
   final startedValue = await locator.get<DeviceAdminManager>().get(bootCompletedHandlerStartedKey);
   final isStarted = startedValue == "true";
-  print('dpc:: init:: startedValue $startedValue, isStarted: $isStarted');
+  print('dam:: init:: startedValue $startedValue, isStarted: $isStarted');
 
   if (isStarted) {
     enableKioskMode();
@@ -248,81 +245,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// class HomePageX extends StatefulWidget {
-//   const HomePageX({super.key});
-
-//   @override
-//   State<HomePageX> createState() => _HomePageState();
-// }
-
-// class _HomePageState extends State<HomePageX> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     context.read<ScreenAwakeProvider>().updateScreenAwakeStatus();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final screenSizeWidth = MediaQuery.sizeOf(context).width;
-
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Device Policy Controller Example'),
-//         actions: [
-//           TextButton(
-//             onPressed: () {
-//               locator
-//                   .get<DeviceAdminManager>()
-//                   .setKeepScreenAwake(!context.read<ScreenAwakeProvider>().isScreenAwake)
-//                   .then(
-//                 (value) {
-//                   context
-//                       .read<ScreenAwakeProvider>()
-//                       .updateScreenAwakeStatus(screenState: ScreenNotAwake());
-//                 },
-//               );
-//             },
-//             child: Consumer<ScreenAwakeProvider>(builder: (context, statusProvider, _) {
-//               return Icon(
-//                 Icons.flash_on,
-//                 color: statusProvider.isScreenAwake ? Colors.amberAccent : Colors.blueGrey,
-//                 size: 36,
-//               );
-//             }),
-//           ),
-//           const SizedBox(width: 12),
-//         ],
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             Expanded(
-//               child: GridView.builder(
-//                 padding: const EdgeInsets.all(16.0),
-//                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                   crossAxisCount: 2,
-//                   crossAxisSpacing: 10.0,
-//                   mainAxisSpacing: 10.0,
-//                   childAspectRatio: (screenSizeWidth / 2) / (screenSizeWidth / 7),
-//                 ),
-//                 itemCount: taskActions.length,
-//                 itemBuilder: (context, index) {
-//                   final action = taskActions[index];
-//                   if (action.label == toggleScreenAwakeLabel) {
-//                     action.didPressed = () {
-//                       context.read<ScreenAwakeProvider>().updateScreenAwakeStatus();
-//                     };
-//                   }
-//                   return action.button(context);
-//                 },
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

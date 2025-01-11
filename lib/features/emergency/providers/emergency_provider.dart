@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:secure_wave/features/emergency/mapper/faq_mapper.dart';
 import 'package:secure_wave/features/emergency/models/faq_model.dart';
 import 'package:secure_wave/features/emergency/models/support_model.dart';
-import 'package:secure_wave/services/database_service/i_database_service.dart';
+import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 
 class EmergencyProvider extends ChangeNotifier {
   final IDatabaseService _databaseService;

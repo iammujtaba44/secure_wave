@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:secure_wave/providers/app_status_provider/app_status_enum.dart';
+import 'package:secure_wave/core/providers/app_status_provider/app_status_enum.dart';
 import 'package:secure_wave/routes/app_routes.dart';
-import 'package:secure_wave/services/database_service/i_database_service.dart';
-import 'package:secure_wave/services/locator_service.dart';
+import 'package:secure_wave/core/services/database_service/i_database_service.dart';
+import 'package:secure_wave/core/services/locator_service.dart';
 import 'package:workmanager/workmanager.dart';
 
 part 'app_status_handler.dart';
@@ -104,10 +104,10 @@ class AppStatusProvider extends ChangeNotifier {
     }
   }
 
-  static Future<void> _showBlockedNotification() async {
-    // Implement notification logic
-    // You might want to use flutter_local_notifications
-  }
+  // static Future<void> _showBlockedNotification() async {
+  //   // Implement notification logic
+  //   // You might want to use flutter_local_notifications
+  // }
 
   @override
   void dispose() {

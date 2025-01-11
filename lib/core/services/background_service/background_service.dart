@@ -2,8 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:secure_wave/firebase_options.dart';
-import 'package:secure_wave/services/database_service/i_database_service.dart';
-import 'package:secure_wave/services/locator_service.dart';
+import 'package:secure_wave/core/services/database_service/i_database_service.dart';
+import 'package:secure_wave/core/services/locator_service.dart';
 
 class BackgroundService {
   Future<void> initializeBackgroundService() async {
