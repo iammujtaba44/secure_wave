@@ -3,7 +3,6 @@ import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
 import 'package:provider/provider.dart';
-import 'package:secure_wave/features/emergency/models/support_model.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/features/emergency/widgets/emergency_card.dart';
 import 'package:secure_wave/services/locator_service.dart';

@@ -1,12 +1,7 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:secure_wave/features/emergency/view/emergency_page.dart';
-import 'package:secure_wave/providers/app_status_provider/app_status_provider.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/services/database_service/i_database_service.dart';
 import 'package:secure_wave/services/locator_service.dart';
-import 'package:shimmer/shimmer.dart';
 
 @RoutePage()
 class HomePage extends StatelessWidget {

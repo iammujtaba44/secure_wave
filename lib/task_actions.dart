@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';

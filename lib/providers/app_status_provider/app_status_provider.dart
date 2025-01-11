@@ -5,8 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:secure_wave/providers/app_status_provider/app_status_enum.dart';
 import 'package:secure_wave/routes/app_routes.dart';
-import 'package:secure_wave/routes/app_routes.gr.dart';
-import 'package:secure_wave/services/database_service/database_service.dart';
 import 'package:secure_wave/services/database_service/i_database_service.dart';
 import 'package:secure_wave/services/locator_service.dart';
 import 'package:workmanager/workmanager.dart';

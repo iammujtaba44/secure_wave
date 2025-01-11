@@ -1,7 +1,6 @@
 library app_routes;
 
 import 'package:auto_route/auto_route.dart';
-import 'package:secure_wave/features/emergency/view/emergency_page.dart';
 import 'package:secure_wave/routes/app_routes.gr.dart';
 
 export 'package:secure_wave/routes/app_routes.gr.dart';

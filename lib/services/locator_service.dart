@@ -28,32 +28,8 @@ class LocatorService implements ILocatorService {
     locator.get<EmergencyProvider>()
       ..getSupportContact()
       ..getFAQ();
-    // locator.get<IDatabaseService>().setData('FAQ', {
-    //   'questions': [
-    //     {
-    //       'title': 'Why is my device locked?',
-    //       'description':
-    //           'Your device is locked due to overdue payment. Once payment is made, your device will be automatically unlocked.'
-    //     },
-    //     {
-    //       'title': 'How can I make a payment?',
-    //       'description':
-    //           'You can make a payment using the "Make Payment Now" button on the Alert tab, or contact our support team for assistance.'
-    //     },
-    //     {
-    //       'title': 'What happens after I pay?',
-    //       'description':
-    //           'Your device will be automatically unlocked within 24 hours of payment confirmation.'
-    //     },
-    //     {
-    //       'title': 'Can I get an extension?',
-    //       'description':
-    //           'Please contact our support team to discuss payment arrangements and possible extensions.'
-    //     }
-    //   ]
-    // });
 
-    // locator.get<BackgroundService>().initializeBackgroundService();
+    locator.get<BackgroundService>().initializeBackgroundService();
   }
 
   static void _setupServices() {

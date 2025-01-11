@@ -3,10 +3,7 @@ import 'dart:developer';
 
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:infinite_binary_ui_kit/resources/resources.dart';
-import 'package:infinite_binary_ui_kit/widgets/widgets.dart';
 import 'package:secure_wave/features/actions/models/action_model.dart';
-import 'package:secure_wave/features/emergency/view/emergency_page.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 
 DeviceAdminManager get dpc => DeviceAdminManager.instance;
