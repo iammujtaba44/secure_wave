@@ -7,7 +7,6 @@ abstract class AppStatusHandler {
     String? password,
   }) {
     _handleDeviceState(status, dam, password);
-
     _handleNavigation(status);
   }
 

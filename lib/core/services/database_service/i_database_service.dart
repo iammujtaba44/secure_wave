@@ -29,7 +29,7 @@ abstract class IDatabaseService {
 
   Future<void> updateData(String path, Map<String, dynamic> data);
 
-  Future<void> setData(String path, Map<String, dynamic> data);
+  Future<void> setData(String path, Map<String, dynamic> data, {bool merge = false});
 
   Future<Map<String, dynamic>> getData(String path);
 

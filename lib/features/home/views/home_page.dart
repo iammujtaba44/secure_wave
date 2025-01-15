@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:secure_wave/core/services/notification_service/notification_service.dart';
 import 'package:secure_wave/routes/app_routes.dart';
-import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
 
 @RoutePage()
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    _initNotificationService();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +61,7 @@ class HomePage extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () {
-              locator.get<IDatabaseService>().setData('support', {'contact': '+923337257968'});
-            },
+            onTap: () {},
             child: CircleAvatar(
               radius: 30,
               backgroundColor: Colors.blue,
@@ -141,5 +150,15 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _initNotificationService() {
+    locator.get<INotificationService>().initialize((result) {
+      if (context.router.current.name != NotificationDetailRoute.name) {
+        context.router.push(NotificationDetailRoute(notification: result));
+      } else {
+        context.router.replace(NotificationDetailRoute(notification: result));
+      }
+    });
   }
 }

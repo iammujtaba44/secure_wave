@@ -21,7 +21,13 @@ void main() async {
       ChangeNotifierProvider(create: (_) => LockProvider(dam: locator.get())),
       ChangeNotifierProvider(create: (_) => DatabaseProvider(dbService: locator.get())),
       ChangeNotifierProvider.value(value: locator.get<EmergencyProvider>()),
-      ChangeNotifierProvider(create: (_) => AppStatusProvider(locator.get(), locator.get())),
+      ChangeNotifierProvider(
+          create: (_) => AppStatusProvider(
+                locator.get(),
+                locator.get(),
+                locator.get(),
+                locator.get(),
+              )),
     ],
     child: const SecureWaveApp(),
   ));

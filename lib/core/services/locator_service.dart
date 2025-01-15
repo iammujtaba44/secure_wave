@@ -2,6 +2,9 @@ import 'package:device_admin_manager/device_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart' show GlobalKey, NavigatorState, ScaffoldMessengerState;
 import 'package:get_it/get_it.dart';
+import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
+import 'package:secure_wave/core/services/device_info_service.dart';
+import 'package:secure_wave/core/services/notification_service/notification_service.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/firebase_options.dart';
 import 'package:secure_wave/core/providers/app_providers.dart';
@@ -22,7 +25,7 @@ class LocatorService implements ILocatorService {
   Future<void> setup() async {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     _registerRouters();
-    _setupServices();
+    await _setupServices();
     _setupProviders();
 
     locator.get<EmergencyProvider>()
@@ -32,10 +35,12 @@ class LocatorService implements ILocatorService {
     //locator.get<BackgroundService>().initializeBackgroundService();
   }
 
-  static void _setupServices() {
+  Future<void> _setupServices() async {
     locator.registerLazySingleton<DeviceAdminManager>(() => DeviceAdminManager.instance);
     locator.registerLazySingleton<IDatabaseService>(() => DatabaseService());
     locator.registerLazySingleton<BackgroundService>(() => BackgroundService());
+    locator.registerLazySingleton<INotificationService>(() => NotificationService());
+    locator.registerLazySingleton<IDeviceInfoService>(() => DeviceInfoService());
   }
 
   static void _setupProviders() {

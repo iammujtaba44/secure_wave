@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:secure_wave/core/providers/app_status_provider/app_status_enum.dart';
 import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 
 class DatabaseService implements IDatabaseService {
@@ -97,7 +98,7 @@ class DatabaseService implements IDatabaseService {
   }
 
   @override
-  Future<void> setData(String path, Map<String, dynamic> data) async {
+  Future<void> setData(String path, Map<String, dynamic> data, {bool merge = false}) async {
     try {
       await _dbRef.child(path).set(data);
     } catch (e) {
@@ -130,18 +131,17 @@ class DatabaseService implements IDatabaseService {
         if (event.snapshot.value != null) {
           return Map<String, dynamic>.from(event.snapshot.value as Map);
         } else {
-          // Return a default state if data doesn't exist
-          return {'status': 'unlock'};
+          return {'app_status': AppStatus.userNotFound.name};
         }
       }).handleError((error) {
         log('Stream error: $error');
         // Return a safe default state in case of error
-        return {'status': 'unlock'};
+        return {'app_status': AppStatus.idle.name};
       });
     } catch (e) {
       log('StreamData setup error: $e');
       // Return an empty stream with default state in case of setup error
-      return Stream.value({'status': 'unlock'});
+      return Stream.value({'app_status': AppStatus.idle.name});
     }
   }
 }

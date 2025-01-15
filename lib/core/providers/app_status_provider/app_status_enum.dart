@@ -6,7 +6,8 @@ enum AppStatus {
   maintenance,
   restricted,
   wipe,
-  idle;
+  idle,
+  userNotFound;
 
   static AppStatus fromString(String status) {
     return AppStatus.values.firstWhere(
@@ -33,6 +34,8 @@ enum AppStatus {
         return 'Device is being wiped';
       case AppStatus.idle:
         return 'App is up and running';
+      case AppStatus.userNotFound:
+        return 'User not found';
     }
   }
 
@@ -44,4 +47,5 @@ enum AppStatus {
   }
 
   bool get isLockDevice => this == AppStatus.lockDevice;
+  bool get isUserNotFound => this == AppStatus.userNotFound;
 }
