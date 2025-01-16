@@ -3,6 +3,7 @@ import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
 import 'package:provider/provider.dart';
+import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/features/emergency/widgets/emergency_card.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
@@ -12,23 +13,29 @@ class AlertTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _provider = context.watch<EmergencyProvider>();
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          EmergencyCard(
-            title: _provider.support?.title ?? '',
-            description: _provider.support?.description ?? '',
-          ),
-          const SizedBox(height: 16),
-          _buildPaymentButton(context),
-          const SizedBox(height: 16),
-          _buildSupportButton(context, _provider.support?.contact ?? ''),
-        ],
-      ),
-    );
+    return Consumer2<AppStatusProvider, EmergencyProvider>(
+        builder: (context, appStatusProvider, emergencyProvider, child) {
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 16,
+          children: [
+            EmergencyCard(
+              title: emergencyProvider.support?.title ?? '',
+              description: emergencyProvider.support?.description ?? '',
+              amountDue: appStatusProvider.duePaymentAmount,
+              dueDate: appStatusProvider.duePaymentDate,
+            ),
+
+            //TODO: Add payment button when required
+            // _buildPaymentButton(context),
+
+            _buildSupportButton(context, emergencyProvider.support?.contact ?? ''),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildPaymentButton(BuildContext context) {

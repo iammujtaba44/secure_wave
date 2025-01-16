@@ -3,8 +3,8 @@ import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
 import 'package:secure_wave/core/services/notification_service/model/notification_result.dart';
 import 'package:secure_wave/features/notification_detail/widgets/notification_detail_page_description_view.dart';
 import 'package:secure_wave/features/notification_detail/widgets/notification_view_widget.dart';
+import 'package:secure_wave/features/notification_detail/widgets/video_player_widget.dart';
 import 'package:secure_wave/routes/app_routes.dart';
-import 'package:video_player/video_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 @RoutePage()
@@ -31,12 +31,21 @@ class NotificationDetailPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 20,
+            spacing: 10,
             children: [
               NotificationDetailPageDescriptionView(notification: notification),
               if (notification.media != null) ...[
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Media',
+                    style: context.theme.headlineSmall_F18xW700,
+                  ),
+                ),
                 NotificationViewWidget(
                   child: _buildMediaContent(),
+                  padding:
+                      notification.isMediaIsText ? const EdgeInsets.only(top: 20) : EdgeInsets.zero,
                 ),
                 const SizedBox(height: 20),
               ],
@@ -63,65 +72,5 @@ class NotificationDetailPage extends StatelessWidget {
       default:
         return Text(notification.media ?? '');
     }
-  }
-}
-
-class VideoPlayerWidget extends StatefulWidget {
-  final String videoUrl;
-
-  const VideoPlayerWidget({Key? key, required this.videoUrl}) : super(key: key);
-
-  @override
-  State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
-}
-
-class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
-  bool _isInitialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = VideoPlayerController.network(widget.videoUrl)
-      ..initialize().then((_) {
-        setState(() {
-          _isInitialized = true;
-        });
-      });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (_isInitialized)
-            VideoPlayer(_controller)
-          else
-            const Center(child: CircularProgressIndicator()),
-          if (_isInitialized)
-            IconButton(
-              icon: Icon(
-                _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                size: 50,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                setState(() {
-                  _controller.value.isPlaying ? _controller.pause() : _controller.play();
-                });
-              },
-            ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

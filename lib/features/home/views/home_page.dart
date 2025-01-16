@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
@@ -20,6 +22,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appStatusProvider = context.watch<AppStatusProvider>();
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
@@ -35,7 +38,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildWelcomeSection(),
+            _buildWelcomeSection(appStatusProvider),
             const SizedBox(height: 24),
             _buildStatsSection(),
           ],
@@ -44,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildWelcomeSection() {
+  Widget _buildWelcomeSection(AppStatusProvider appStatusProvider) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -70,8 +73,9 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(width: 16),
           Column(
+            spacing: 4,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Welcome Back!',
                 style: TextStyle(
@@ -79,9 +83,8 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 4),
               Text(
-                'Mujtaba zain',
+                appStatusProvider.userName,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey,

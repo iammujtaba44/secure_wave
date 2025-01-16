@@ -38,6 +38,8 @@ class NotificationResult {
       'data': data,
     };
   }
+
+  bool get isMediaIsText => mediaType == MediaType.text;
 }
 
 enum MediaType {

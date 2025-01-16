@@ -4,6 +4,8 @@ import 'package:flutter/material.dart' show GlobalKey, NavigatorState, ScaffoldM
 import 'package:get_it/get_it.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
 import 'package:secure_wave/core/services/device_info_service.dart';
+import 'package:secure_wave/core/services/location_service.dart/i_location_service.dart';
+import 'package:secure_wave/core/services/location_service.dart/location_service.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/firebase_options.dart';
@@ -28,6 +30,7 @@ class LocatorService implements ILocatorService {
     await _setupServices();
     _setupProviders();
 
+    locator.get<ILocationService>().requestLocationPermission();
     locator.get<EmergencyProvider>()
       ..getSupportContact()
       ..getFAQ();
@@ -41,6 +44,7 @@ class LocatorService implements ILocatorService {
     locator.registerLazySingleton<BackgroundService>(() => BackgroundService());
     locator.registerLazySingleton<INotificationService>(() => NotificationService());
     locator.registerLazySingleton<IDeviceInfoService>(() => DeviceInfoService());
+    locator.registerLazySingleton<ILocationService>(() => LocationService());
   }
 
   static void _setupProviders() {

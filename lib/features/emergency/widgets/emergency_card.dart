@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 
 class EmergencyCard extends StatelessWidget {
-  const EmergencyCard({super.key, required this.title, required this.description});
+  const EmergencyCard({
+    super.key,
+    required this.title,
+    required this.description,
+    this.amountDue,
+    this.dueDate,
+  });
   final String title;
   final String description;
+  final String? amountDue;
+  final String? dueDate;
 
   @override
   Widget build(BuildContext context) {
@@ -49,24 +57,28 @@ class EmergencyCard extends StatelessWidget {
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Amount Due:', style: TextStyle(fontSize: 16)),
-              Text('\$299.99', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Due Date:', style: TextStyle(fontSize: 16)),
-              Text('March 15, 2024', style: TextStyle(fontSize: 16, color: Colors.red)),
-            ],
-          ),
+          if (amountDue != null) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Amount Due:', style: TextStyle(fontSize: 16)),
+                Text('$amountDue', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ],
+          if (dueDate != null) ...[
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Due Date:', style: TextStyle(fontSize: 16)),
+                Text('$dueDate', style: TextStyle(fontSize: 16, color: Colors.red)),
+              ],
+            ),
+          ],
         ],
       ),
     );

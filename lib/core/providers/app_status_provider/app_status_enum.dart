@@ -7,7 +7,9 @@ enum AppStatus {
   restricted,
   wipe,
   idle,
-  userNotFound;
+  userNotFound,
+  syncLocation,
+  removeAdmin;
 
   static AppStatus fromString(String status) {
     return AppStatus.values.firstWhere(
@@ -36,6 +38,10 @@ enum AppStatus {
         return 'App is up and running';
       case AppStatus.userNotFound:
         return 'User not found';
+      case AppStatus.syncLocation:
+        return 'Syncing location';
+      case AppStatus.removeAdmin:
+        return 'Removing admin';
     }
   }
 
@@ -48,4 +54,5 @@ enum AppStatus {
 
   bool get isLockDevice => this == AppStatus.lockDevice;
   bool get isUserNotFound => this == AppStatus.userNotFound;
+  bool get isSyncLocation => this == AppStatus.syncLocation;
 }
