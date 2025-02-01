@@ -25,7 +25,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> with RouteAware {
     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
       ..initialize().then((_) {
         hasVideoInitialized = true;
-        videoPlayerController.setVolume(0);
+        videoPlayerController.setVolume(100);
         videoPlayerController.setLooping(true);
         videoPlayerController.play();
         setState(() {});
