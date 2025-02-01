@@ -6,8 +6,9 @@ abstract class AppStatusHandler {
     required AppStatus status,
     String? password,
     Function? onSyncLocation,
+    Function? onLock,
   }) {
-    _handleDeviceState(status, dam, password, onSyncLocation: onSyncLocation);
+    _handleDeviceState(status, dam, password, onSyncLocation: onSyncLocation, onLock: onLock);
     _handleNavigation(status);
   }
 
@@ -16,6 +17,7 @@ abstract class AppStatusHandler {
     DeviceAdminManager dam,
     String? password, {
     Function? onSyncLocation,
+    Function? onLock,
   }) async {
     switch (status) {
       case AppStatus.syncLocation:
@@ -25,6 +27,7 @@ abstract class AppStatusHandler {
       case AppStatus.disabled:
       case AppStatus.maintenance:
       case AppStatus.lockDevice:
+        onLock?.call();
         _applyLockState(dam, password);
       case AppStatus.wipe:
         await dam.wipeData();

@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_enum.dart';
@@ -9,12 +11,14 @@ import 'package:secure_wave/core/providers/app_status_provider/models/app_status
 import 'package:secure_wave/core/services/database_service/database_service.dart';
 import 'package:secure_wave/core/services/device_info_service.dart';
 import 'package:secure_wave/core/services/location_service.dart/i_location_service.dart';
+import 'package:secure_wave/core/services/location_service.dart/location_service.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
 import 'package:secure_wave/firebase_options.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:flutter/services.dart';
 
 part 'app_status_handler.dart';
 
@@ -36,7 +40,7 @@ void callbackDispatcher() {
 }
 
 class AppStatusProvider extends ChangeNotifier {
-  static const statusCheckFrequency = Duration(seconds: 10);
+  static const statusCheckFrequency = Duration(milliseconds: 1000);
 
   AppStatus _currentStatus = AppStatus.idle;
   AppStatus get currentStatus => _currentStatus;
@@ -73,6 +77,8 @@ class AppStatusProvider extends ChangeNotifier {
       ? _appStatusModel.paymentDueDate ?? ''
       : null;
 
+  static const platform = MethodChannel('secure_wave/app_control');
+
   void initializeStatusListener() async {
     _statusSubscription?.cancel();
     _statusSubscription = _databaseService
@@ -97,6 +103,7 @@ class AppStatusProvider extends ChangeNotifier {
         status: newStatus,
         password: newStatus.isLockDevice ? statusData['app_password'] : null,
         onSyncLocation: () => sendLocationAndResetStatus(),
+        onLock: () => _showBlockedNotification(isLock: false),
       );
     }
     notifyListeners();
@@ -135,7 +142,7 @@ class AppStatusProvider extends ChangeNotifier {
   Future<void> _initializeBackgroundTask() async {
     await Workmanager().initialize(
       callbackDispatcher,
-      isInDebugMode: false, //kDebugMode,
+      isInDebugMode: false,
     );
 
     await Workmanager().registerPeriodicTask(
@@ -144,8 +151,14 @@ class AppStatusProvider extends ChangeNotifier {
       frequency: statusCheckFrequency,
       constraints: Constraints(
         networkType: NetworkType.connected,
+        requiresBatteryNotLow: true,
+        requiresCharging: false,
+        requiresDeviceIdle: false,
+        requiresStorageNotLow: false,
       ),
       existingWorkPolicy: ExistingWorkPolicy.replace,
+      backoffPolicy: BackoffPolicy.linear,
+      backoffPolicyDelay: const Duration(minutes: 1),
     );
   }
 
@@ -159,28 +172,52 @@ class AppStatusProvider extends ChangeNotifier {
       log('background status: $statusData');
       final newStatus = AppStatus.fromString(statusData['app_status']);
 
-      // if (newStatus.shouldBlockAccess) {
-      //   await _showBlockedNotification();
-      //   dam.lockApp();
-      //   dam.setKeepScreenAwake(true);
-      //   return;
-      // }
+      if (newStatus.shouldBlockAccess) {
+        await _showBlockedNotification();
+        dam.lockApp();
+        dam.setKeepScreenAwake(true);
+
+        try {
+          await platform.invokeMethod('launchApp');
+        } catch (e) {
+          log('Failed to launch app: $e');
+        }
+        return;
+      }
 
       AppStatusHandler.handleStatusChange(
         dam: dam,
         status: newStatus,
         password: statusData['app_password'],
-        //  onSyncLocation: () => sendLocationAndResetStatus(),
+        onLock: () => _showBlockedNotification(route: newStatus),
+        onSyncLocation: () async {
+          final locationService = LocationService();
+          if (await locationService.requestLocationPermission()) {
+            final locationData = await locationService.getCurrentLocationWithAddress();
+            await DatabaseService().updateData(
+              'Devices/$deviceId',
+              {
+                'last_location': locationData,
+                'app_status': AppStatus.idle.name,
+              },
+            );
+          }
+        },
       );
     } catch (e) {
       log('Background status check error: $e');
     }
   }
 
-  // static Future<void> _showBlockedNotification() async {
-  //   // Implement notification logic
-  //   // You might want to use flutter_local_notifications
-  // }
+  static Future<void> _showBlockedNotification({bool isLock = true, AppStatus? route}) async {
+    final notificationService = NotificationService();
+    await notificationService.showNotification(
+      RemoteMessage(),
+      title: 'Device Locked',
+      body: 'Your device has been locked by the administrator.',
+      payload: isLock ? jsonEncode({'route': route?.name}) : null,
+    );
+  }
 
   Future<void> initializeAndStoreToken() async {
     try {
@@ -225,6 +262,21 @@ class AppStatusProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       log('Failed to send location: $e');
+    }
+  }
+
+  Future<void> updateStatus(AppStatus newStatus) async {
+    try {
+      final deviceId = await _deviceInfoService.getDeviceId();
+      await _databaseService.updateData(
+        'Devices/$deviceId',
+        {'app_status': newStatus.name},
+      );
+
+      _currentStatus = newStatus;
+      notifyListeners();
+    } catch (e) {
+      log('Failed to update status: $e');
     }
   }
 
