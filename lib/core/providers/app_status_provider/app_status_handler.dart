@@ -6,8 +6,13 @@ abstract class AppStatusHandler {
     required AppStatus status,
     String? password,
     Function? onSyncLocation,
+    Function? onLock,
+    bool shouldKeepScreenAwake = true,
   }) {
-    _handleDeviceState(status, dam, password, onSyncLocation: onSyncLocation);
+    _handleDeviceState(status, dam, password,
+        onSyncLocation: onSyncLocation,
+        onLock: onLock,
+        shouldKeepScreenAwake: shouldKeepScreenAwake);
     _handleNavigation(status);
   }
 
@@ -16,6 +21,8 @@ abstract class AppStatusHandler {
     DeviceAdminManager dam,
     String? password, {
     Function? onSyncLocation,
+    Function? onLock,
+    bool shouldKeepScreenAwake = true,
   }) async {
     switch (status) {
       case AppStatus.syncLocation:
@@ -25,7 +32,8 @@ abstract class AppStatusHandler {
       case AppStatus.disabled:
       case AppStatus.maintenance:
       case AppStatus.lockDevice:
-        _applyLockState(dam, password);
+        onLock?.call();
+        _applyLockState(dam, password, shouldKeepScreenAwake: shouldKeepScreenAwake);
       case AppStatus.wipe:
         await dam.wipeData();
       case AppStatus.removeAdmin:
@@ -60,12 +68,16 @@ abstract class AppStatusHandler {
     }
   }
 
-  static void _applyLockState(DeviceAdminManager dam, String? password) {
+  static void _applyLockState(DeviceAdminManager dam, String? password,
+      {bool shouldKeepScreenAwake = true}) {
     if (password != null) {
       dam.lockDevice(password: password);
     } else {
       dam.lockApp();
     }
-    dam.setKeepScreenAwake(true);
+
+    if (shouldKeepScreenAwake) {
+      dam.setKeepScreenAwake(true);
+    }
   }
 }

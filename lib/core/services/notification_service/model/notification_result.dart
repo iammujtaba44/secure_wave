@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:secure_wave/core/providers/app_status_provider/app_status_enum.dart';
+
 class NotificationResult {
   final String title;
   final String message;
@@ -7,7 +9,7 @@ class NotificationResult {
   final MediaType mediaType;
   final String? notificationId;
   final Map<String, dynamic>? data;
-
+  final AppStatus? route;
   NotificationResult({
     required this.title,
     required this.message,
@@ -15,6 +17,7 @@ class NotificationResult {
     this.mediaType = MediaType.text,
     this.notificationId,
     this.data,
+    this.route,
   });
 
   factory NotificationResult.fromJson(Map<String, dynamic> json) {
@@ -25,6 +28,7 @@ class NotificationResult {
       mediaType: MediaType.fromJson(json['media_type'] ?? 'text'),
       notificationId: json['notificationId'] ?? null,
       data: json['data'] ?? null,
+      route: json['route'] != null ? AppStatus.fromString(json['route']) : null,
     );
   }
 

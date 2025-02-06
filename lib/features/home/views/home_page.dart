@@ -1,3 +1,4 @@
+import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
@@ -157,6 +158,15 @@ class _HomePageState extends State<HomePage> {
 
   void _initNotificationService() {
     locator.get<INotificationService>().initialize((result) {
+      if (result.route != null) {
+        AppStatusHandler.handleStatusChange(
+          dam: DeviceAdminManager.instance,
+          status: result.route!,
+        );
+
+        context.read<AppStatusProvider>().updateStatus(result.route!);
+        return;
+      }
       if (context.router.current.name != NotificationDetailRoute.name) {
         context.router.push(NotificationDetailRoute(notification: result));
       } else {

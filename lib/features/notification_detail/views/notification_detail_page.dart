@@ -43,7 +43,10 @@ class NotificationDetailPage extends StatelessWidget {
                   ),
                 ),
                 NotificationViewWidget(
-                  child: _buildMediaContent(),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: _buildMediaContent(),
+                  ),
                   padding:
                       notification.isMediaIsText ? const EdgeInsets.only(top: 20) : EdgeInsets.zero,
                 ),
