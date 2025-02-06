@@ -11,7 +11,6 @@ import 'package:secure_wave/features/emergency/providers/emergency_provider.dart
 import 'package:secure_wave/firebase_options.dart';
 import 'package:secure_wave/core/providers/app_providers.dart';
 import 'package:secure_wave/routes/app_routes.dart';
-import 'package:secure_wave/core/services/background_service/background_service.dart';
 import 'package:secure_wave/core/services/database_service/database_service.dart';
 import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 
@@ -41,13 +40,21 @@ class LocatorService implements ILocatorService {
   Future<void> _setupServices() async {
     locator.registerLazySingleton<DeviceAdminManager>(() => DeviceAdminManager.instance);
     locator.registerLazySingleton<IDatabaseService>(() => DatabaseService());
-    locator.registerLazySingleton<BackgroundService>(() => BackgroundService());
     locator.registerLazySingleton<INotificationService>(() => NotificationService());
     locator.registerLazySingleton<IDeviceInfoService>(() => DeviceInfoService());
     locator.registerLazySingleton<ILocationService>(() => LocationService());
   }
 
   static void _setupProviders() {
+    locator.registerLazySingleton<AppStatusProvider>(
+      () => AppStatusProvider(
+        locator.get(),
+        locator.get(),
+        locator.get(),
+        locator.get(),
+        locator.get(),
+      ),
+    );
     locator.registerLazySingleton<ScreenAwakeProvider>(
       () => ScreenAwakeProvider(
         dam: locator.get(),

@@ -52,4 +52,11 @@ enum AppStatus {
   bool get isLockDevice => this == AppStatus.lockDevice;
   bool get isUserNotFound => this == AppStatus.userNotFound;
   bool get isSyncLocation => this == AppStatus.syncLocation;
+  bool get isIdle => this == AppStatus.idle;
+
+  bool get isLockDeviceFunctionality =>
+      this == AppStatus.lock ||
+      this == AppStatus.disabled ||
+      this == AppStatus.maintenance ||
+      this == AppStatus.lockDevice;
 }

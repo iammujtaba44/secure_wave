@@ -17,27 +17,28 @@ import 'package:secure_wave/firebase_options.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
-import 'package:workmanager/workmanager.dart';
 import 'package:flutter/services.dart';
 
 part 'app_status_handler.dart';
 
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    try {
-      switch (task) {
-        case 'statusCheck':
-          await AppStatusProvider.checkStatusInBackground();
-          break;
-      }
-      return true;
-    } catch (err) {
-      log('Background task error: $err');
-      return false;
-    }
-  });
-}
+//TODO(Mujtaba) : Will uncomment this in case, it needed
+
+// @pragma('vm:entry-point')
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) async {
+//     try {
+//       switch (task) {
+//         case 'statusCheck':
+//           await AppStatusProvider.checkStatusInBackground();
+//           break;
+//       }
+//       return true;
+//     } catch (err) {
+//       log('Background task error: $err');
+//       return false;
+//     }
+//   });
+// }
 
 class AppStatusProvider extends ChangeNotifier {
   static const statusCheckFrequency = Duration(milliseconds: 1000);
@@ -59,8 +60,9 @@ class AppStatusProvider extends ChangeNotifier {
     this._locationService,
   ) {
     initializeStatusListener();
-    _initializeBackgroundTask();
     initializeAndStoreToken();
+    //TODO(Mujtaba) : Will uncomment this in case, it needed
+    // _initializeBackgroundTask();
   }
 
   AppStatusModel _appStatusModel = AppStatusModel();
@@ -103,7 +105,7 @@ class AppStatusProvider extends ChangeNotifier {
         status: newStatus,
         password: newStatus.isLockDevice ? statusData['app_password'] : null,
         onSyncLocation: () => sendLocationAndResetStatus(),
-        onLock: () => _showBlockedNotification(isLock: false),
+        // onLock: () => _showBlockedNotification(isLock: false),
       );
     }
     notifyListeners();
@@ -139,28 +141,30 @@ class AppStatusProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _initializeBackgroundTask() async {
-    await Workmanager().initialize(
-      callbackDispatcher,
-      isInDebugMode: false,
-    );
+  //TODO(Mujtaba) : Will uncomment this in case, it needed
 
-    await Workmanager().registerPeriodicTask(
-      'statusCheck',
-      'statusCheck',
-      frequency: statusCheckFrequency,
-      constraints: Constraints(
-        networkType: NetworkType.connected,
-        requiresBatteryNotLow: true,
-        requiresCharging: false,
-        requiresDeviceIdle: false,
-        requiresStorageNotLow: false,
-      ),
-      existingWorkPolicy: ExistingWorkPolicy.replace,
-      backoffPolicy: BackoffPolicy.linear,
-      backoffPolicyDelay: const Duration(minutes: 1),
-    );
-  }
+  // Future<void> _initializeBackgroundTask() async {
+  //   await Workmanager().initialize(
+  //     callbackDispatcher,
+  //     isInDebugMode: false,
+  //   );
+
+  //   await Workmanager().registerPeriodicTask(
+  //     'statusCheck',
+  //     'statusCheck',
+  //     frequency: statusCheckFrequency,
+  //     constraints: Constraints(
+  //       networkType: NetworkType.connected,
+  //       requiresBatteryNotLow: true,
+  //       requiresCharging: false,
+  //       requiresDeviceIdle: false,
+  //       requiresStorageNotLow: false,
+  //     ),
+  //     existingWorkPolicy: ExistingWorkPolicy.replace,
+  //     backoffPolicy: BackoffPolicy.linear,
+  //     backoffPolicyDelay: const Duration(minutes: 1),
+  //   );
+  // }
 
   static Future<void> checkStatusInBackground() async {
     try {
@@ -173,7 +177,7 @@ class AppStatusProvider extends ChangeNotifier {
       final newStatus = AppStatus.fromString(statusData['app_status']);
 
       if (newStatus.shouldBlockAccess) {
-        await _showBlockedNotification();
+        // await _showBlockedNotification();
         dam.lockApp();
         dam.setKeepScreenAwake(true);
 
