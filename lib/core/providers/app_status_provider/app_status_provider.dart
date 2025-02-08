@@ -84,7 +84,7 @@ class AppStatusProvider extends ChangeNotifier {
   void initializeStatusListener() async {
     _statusSubscription?.cancel();
     _statusSubscription = _databaseService
-        .streamData('Devices/${await _deviceInfoService.getDeviceId()}')
+        .streamData('Devices/${await _deviceInfoService.userId()}')
         .listen(_handleStatusUpdate);
   }
 
@@ -113,15 +113,15 @@ class AppStatusProvider extends ChangeNotifier {
 
   Future<void> _initializeNewUser() async {
     try {
-      final deviceId = await _deviceInfoService.getDeviceId();
-      final deviceModel = await _deviceInfoService.getDeviceModel();
+      final deviceId = await _deviceInfoService.userId();
+      final deviceModel = await _deviceInfoService.deviceInfo();
       final initialData = {
         "CreatedBy": "Admin",
         "CreatedOn": DateTime.now().toIso8601String(),
         "DeviceId": deviceId,
-        "DeviceName": deviceModel,
-        "IMEI": "",
-        "Manufacturer": deviceModel.split(' ').first,
+        "DeviceName": deviceModel?.device,
+        "IMEI": (await _dam.getDeviceInfo())?['imei'] ?? '',
+        "Manufacturer": deviceModel?.manufacturer,
         "Status": true,
         "app_password": "",
         "app_status": AppStatus.idle.name,
@@ -171,7 +171,7 @@ class AppStatusProvider extends ChangeNotifier {
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
       final dam = DeviceAdminManager.instance;
-      final deviceId = await DeviceInfoService().getDeviceId();
+      final deviceId = await DeviceInfoService().userId();
       final statusData = await DatabaseService().getData('Devices/${deviceId}');
       log('background status: $statusData');
       final newStatus = AppStatus.fromString(statusData['app_status']);
@@ -230,11 +230,11 @@ class AppStatusProvider extends ChangeNotifier {
       if (fcmToken != null) {
         // Check if user exists before updating FCM token
         final userData =
-            await _databaseService.getData('Devices/${await _deviceInfoService.getDeviceId()}');
+            await _databaseService.getData('Devices/${await _deviceInfoService.userId()}');
         log('userData: $userData');
         if (userData.isNotEmpty) {
           await _databaseService.updateData(
-            'Devices/${await _deviceInfoService.getDeviceId()}',
+            'Devices/${await _deviceInfoService.userId()}',
             {'fcm_token': fcmToken},
           );
         }
@@ -252,7 +252,7 @@ class AppStatusProvider extends ChangeNotifier {
       }
 
       final locationData = await _locationService.getCurrentLocationWithAddress();
-      final deviceId = await _deviceInfoService.getDeviceId();
+      final deviceId = await _deviceInfoService.userId();
 
       await _databaseService.updateData(
         'Devices/$deviceId',
@@ -271,7 +271,7 @@ class AppStatusProvider extends ChangeNotifier {
 
   Future<void> updateStatus(AppStatus newStatus) async {
     try {
-      final deviceId = await _deviceInfoService.getDeviceId();
+      final deviceId = await _deviceInfoService.userId();
       await _databaseService.updateData(
         'Devices/$deviceId',
         {'app_status': newStatus.name},

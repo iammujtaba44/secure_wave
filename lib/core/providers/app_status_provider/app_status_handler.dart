@@ -35,7 +35,7 @@ abstract class AppStatusHandler {
         onLock?.call();
         _applyLockState(dam, password, shouldKeepScreenAwake: shouldKeepScreenAwake);
       case AppStatus.wipe:
-        await dam.wipeData();
+        await dam.wipeData(flags: 1, reason: 'Device is being wiped');
       case AppStatus.removeAdmin:
         await dam.clearDeviceOwnerApp();
       case AppStatus.unlock:
@@ -53,11 +53,11 @@ abstract class AppStatusHandler {
     switch (status) {
       case AppStatus.syncLocation:
       case AppStatus.removeAdmin:
+      case AppStatus.wipe:
         break;
       case AppStatus.lock:
       case AppStatus.disabled:
       case AppStatus.maintenance:
-      case AppStatus.wipe:
       case AppStatus.lockDevice:
         context.router.replaceAll([const EmergencyRoute()]);
       case AppStatus.unlock:

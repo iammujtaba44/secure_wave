@@ -91,7 +91,7 @@ Future<void> startListeningToFirebase() async {
   final DatabaseService databaseService = DatabaseService();
   final DeviceInfoService deviceInfoService = DeviceInfoService();
   databaseService
-      .streamData('Devices/${await deviceInfoService.getDeviceId()}')
+      .streamData('Devices/${await deviceInfoService.userId()}')
       .listen(_handleStatusUpdateOnBackground);
 }
 

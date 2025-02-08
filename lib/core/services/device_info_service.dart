@@ -1,20 +1,23 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 
 abstract class IDeviceInfoService {
-  Future<String> getDeviceId();
-  Future<String> getDeviceModel();
+  Future<String> userId();
+  Future<AndroidDeviceInfo?> deviceInfo();
 }
 
 class DeviceInfoService implements IDeviceInfoService {
   final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
 
   @override
-  Future<String> getDeviceId() async {
+  Future<String> userId() async {
     if (Platform.isAndroid) {
       final androidInfo = await _deviceInfo.androidInfo;
-      return androidInfo.id.replaceAll(RegExp(r'[^\w\s]+'), '');
+      final deviceId = androidInfo.id.replaceAll(RegExp(r'[^\w\s]+'), '');
+
+      final String deviceUserId =
+          '${androidInfo.manufacturer}_${androidInfo.model}_${androidInfo.serialNumber}_${deviceId}';
+      return deviceUserId;
     } else if (Platform.isIOS) {
       final iosInfo = await _deviceInfo.iosInfo;
       // Returns the identifierForVendor
@@ -24,15 +27,11 @@ class DeviceInfoService implements IDeviceInfoService {
   }
 
   @override
-  Future<String> getDeviceModel() async {
+  Future<AndroidDeviceInfo?> deviceInfo() async {
     if (Platform.isAndroid) {
       final androidInfo = await _deviceInfo.androidInfo;
-      return androidInfo.model;
-    } else if (Platform.isIOS) {
-      final iosInfo = await _deviceInfo.iosInfo;
-      // Returns the identifierForVendor
-      return iosInfo.identifierForVendor ?? 'unknown';
+      return androidInfo;
     }
-    return 'unknown_platform';
+    return null;
   }
 }

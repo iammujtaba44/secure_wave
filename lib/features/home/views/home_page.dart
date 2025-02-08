@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
@@ -21,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _initNotificationService();
+    _requestPhoneStatePermission();
   }
 
   @override
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: GestureDetector(
             onTap: () async {
-              // context.router.push(const DeviceAdminManagerRoute());
+              context.router.push(const DeviceAdminManagerRoute());
             },
             child: const Text('Secure Wave')),
         backgroundColor: Colors.blue,
@@ -175,5 +175,10 @@ class _HomePageState extends State<HomePage> {
         context.router.replace(NotificationDetailRoute(notification: result));
       }
     });
+  }
+
+  Future<void> _requestPhoneStatePermission() async {
+    if (await Permission.phone.request().isGranted) {
+    } else {}
   }
 }
