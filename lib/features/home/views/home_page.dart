@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,8 +29,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-            onDoubleTap: () {
-              context.router.push(const DeviceAdminManagerRoute());
+            onTap: () async {
+              // context.router.push(const DeviceAdminManagerRoute());
             },
             child: const Text('Secure Wave')),
         backgroundColor: Colors.blue,

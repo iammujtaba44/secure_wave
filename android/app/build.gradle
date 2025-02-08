@@ -4,8 +4,11 @@ plugins {
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id 'dev.flutter.flutter-gradle-plugin'
     id 'com.google.gms.google-services'
-
 }
+def keystorePropertiesFile = rootProject.file("../key.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 
 android {
     namespace = "com.ib.secure"
@@ -32,11 +35,20 @@ android {
         versionName = flutter.versionName
     }
 
+     signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file('../securewave_keystore.jks')
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
         }
     }
 }
@@ -50,8 +62,15 @@ flutter {
     source = "../.."
 }
 
-// afterEvaluate {
-//     tasks.matching { it.name == "mapDebugSourceSetPaths" }.configureEach {
-//         it.dependsOn tasks.named("processDebugGoogleServices")
-//     }
-// }
+afterEvaluate {
+    tasks.matching { it.name == "mapReleaseSourceSetPaths" }.configureEach {
+        it.dependsOn tasks.named("processReleaseGoogleServices")
+    }
+}
+
+afterEvaluate {
+    tasks.matching { it.name == "mapDebugSourceSetPaths" }.configureEach {
+        it.dependsOn tasks.named("processDebugGoogleServices")
+    }
+}
+

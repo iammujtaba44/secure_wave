@@ -46,6 +46,7 @@ void main() async {
     ),
   );
   await backgroundTask();
+  await setResetRestriction();
 
   initKioskMode();
 
