@@ -39,7 +39,7 @@ android {
         release {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
-            storeFile file('../securewave_keystore.jks')
+            storeFile file('securewave_keystore.jks')
             storePassword keystoreProperties['storePassword']
         }
     }
