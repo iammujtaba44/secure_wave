@@ -64,8 +64,8 @@ void main() async {
 
 Future<void> backgroundTask() async {
   FlutterForegroundTask.startService(
-    notificationTitle: 'Admin App Running',
-    notificationText: 'Listening to Firebase Realtime Database',
+    notificationTitle: '',
+    notificationText: '',
     callback: startListeningToFirebase,
   );
 }

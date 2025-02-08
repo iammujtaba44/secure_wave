@@ -58,5 +58,6 @@ enum AppStatus {
       this == AppStatus.lock ||
       this == AppStatus.disabled ||
       this == AppStatus.maintenance ||
-      this == AppStatus.lockDevice;
+      this == AppStatus.lockDevice ||
+      this == AppStatus.removeAdmin;
 }

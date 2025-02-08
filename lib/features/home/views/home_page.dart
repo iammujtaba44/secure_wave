@@ -30,7 +30,8 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: GestureDetector(
             onTap: () async {
-              context.router.push(const DeviceAdminManagerRoute());
+              //TODO: Add device admin manager Route
+              // context.router.push(const DeviceAdminManagerRoute());
             },
             child: const Text('Secure Wave')),
         backgroundColor: Colors.blue,

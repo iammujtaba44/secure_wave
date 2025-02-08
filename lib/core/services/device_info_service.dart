@@ -15,8 +15,7 @@ class DeviceInfoService implements IDeviceInfoService {
       final androidInfo = await _deviceInfo.androidInfo;
       final deviceId = androidInfo.id.replaceAll(RegExp(r'[^\w\s]+'), '');
 
-      final String deviceUserId =
-          '${androidInfo.manufacturer}_${androidInfo.model}_${androidInfo.serialNumber}_${deviceId}';
+      final String deviceUserId = '${androidInfo.manufacturer}_${androidInfo.model}_${deviceId}';
       return deviceUserId;
     } else if (Platform.isIOS) {
       final iosInfo = await _deviceInfo.iosInfo;
