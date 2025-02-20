@@ -275,7 +275,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "000c085a76b346bbd4654f538b976873cdfb9bc6"
+      resolved-ref: b61c4f3e52cbe8e1188a82e619c4a6e08a01b0ec
       url: "https://github.com/iammujtaba44/DeviceAdminManager.git"
     source: git
     version: "0.0.1"

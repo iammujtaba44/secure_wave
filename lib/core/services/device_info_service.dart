@@ -13,9 +13,10 @@ class DeviceInfoService implements IDeviceInfoService {
   Future<String> userId() async {
     if (Platform.isAndroid) {
       final androidInfo = await _deviceInfo.androidInfo;
-      final deviceId = androidInfo.id.replaceAll(RegExp(r'[^\w\s]+'), '');
+      final rgx = RegExp(r'[^\w\s]+');
 
-      final String deviceUserId = '${androidInfo.manufacturer}_${androidInfo.model}_${deviceId}';
+      final String deviceUserId =
+          '${androidInfo.manufacturer.toUpperCase()}_${androidInfo.model.replaceAll(rgx, '')}_${androidInfo.id.replaceAll(rgx, '')}';
       return deviceUserId;
     } else if (Platform.isIOS) {
       final iosInfo = await _deviceInfo.iosInfo;
