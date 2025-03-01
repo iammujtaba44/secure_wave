@@ -23,10 +23,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _onInit();
+    // _onInit();
   }
 
-  void _onInit() async {
+  Future<void> _onInit() async {
     _initNotificationService();
     await locator.get<ILocationService>().requestLocationPermission();
     await _requestPhoneStatePermission();
@@ -56,6 +56,16 @@ class _HomePageState extends State<HomePage> {
             _buildStatsSection(),
           ],
         ),
+      ),
+      floatingActionButton: IBButton.regular(
+        title: 'Set Admin Permissions',
+        type: IBButtonType.primary,
+        onPressed: () async {
+          await _onInit();
+          await AppStatusHandler.setAdminRestrictions();
+          context.read<AppStatusProvider>().initializeStatusListener();
+          context.read<AppStatusProvider>().initializeAndStoreToken();
+        },
       ),
     );
   }

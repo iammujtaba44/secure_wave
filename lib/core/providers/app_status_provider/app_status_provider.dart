@@ -59,8 +59,8 @@ class AppStatusProvider extends ChangeNotifier {
     this._deviceInfoService,
     this._locationService,
   ) {
-    initializeStatusListener();
-    initializeAndStoreToken();
+    // initializeStatusListener();
+    // initializeAndStoreToken();
     //TODO(Mujtaba) : Will uncomment this in case, it needed
     // _initializeBackgroundTask();
   }

@@ -47,8 +47,8 @@ void main() async {
     ),
   );
   await backgroundTask();
-  await AppStatusHandler.setAdminRestrictions();
-  await initKioskMode();
+  // AppStatusHandler.setAdminRestrictions();
+  initKioskMode();
 
   runApp(MultiProvider(
     providers: [
