@@ -6,6 +6,7 @@ import 'package:android_intent_plus/flag.dart';
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -46,9 +47,8 @@ void main() async {
     ),
   );
   await backgroundTask();
-  await setResetRestriction();
-
-  initKioskMode();
+  await AppStatusHandler.setAdminRestrictions();
+  await initKioskMode();
 
   runApp(MultiProvider(
     providers: [
@@ -71,7 +71,7 @@ Future<void> backgroundTask() async {
 }
 
 Future<void> startListeningToFirebase() async {
-  print('startListeningToFirebase');
+  debugPrint('startListeningToFirebase');
   WidgetsFlutterBinding.ensureInitialized();
 
   platform.setMethodCallHandler((call) async {

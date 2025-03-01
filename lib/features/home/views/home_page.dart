@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
+import 'package:secure_wave/core/services/location_service.dart/i_location_service.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
@@ -19,8 +23,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _onInit();
+  }
+
+  void _onInit() async {
     _initNotificationService();
-    _requestPhoneStatePermission();
+    await locator.get<ILocationService>().requestLocationPermission();
+    await _requestPhoneStatePermission();
   }
 
   @override
@@ -180,6 +189,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _requestPhoneStatePermission() async {
     if (await Permission.phone.request().isGranted) {
-    } else {}
+      log('phone state permission granted');
+      // context.read<AppStatusProvider>().updateIMEI();
+    } else {
+      log('phone state permission not granted');
+    }
   }
 }

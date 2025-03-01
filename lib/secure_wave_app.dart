@@ -14,13 +14,6 @@ class SecureWaveApp extends StatelessWidget {
   }
 }
 
-Future<void> setResetRestriction() async {
-  final dam = DeviceAdminManager.instance;
-  if (await dam.isAdminActive()) {
-    await dam.setDeviceAdminPolicies();
-  }
-}
-
 const bootCompletedHandlerStartedKey = "bootCompletedHandlerStarted";
 Future<void> enableKioskMode() async {
   try {

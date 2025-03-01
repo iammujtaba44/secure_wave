@@ -133,7 +133,7 @@ class AppStatusProvider extends ChangeNotifier {
 
       await _databaseService.setData('Devices/$deviceId', initialData);
       await initializeAndStoreToken();
-      await sendLocationAndResetStatus();
+      // await sendLocationAndResetStatus();
       initializeStatusListener();
     } catch (stack, e) {
       log('Failed to initialize new user: $e');
@@ -279,6 +279,19 @@ class AppStatusProvider extends ChangeNotifier {
 
       _currentStatus = newStatus;
       notifyListeners();
+    } catch (e) {
+      log('Failed to update status: $e');
+    }
+  }
+
+  Future<void> updateIMEI() async {
+    try {
+      final deviceId = await _deviceInfoService.userId();
+      final imei = (await DeviceAdminManager.instance.getDeviceInfo())?['imei'] ?? '';
+      await _databaseService.updateData(
+        'Devices/$deviceId',
+        {'IMEI': imei},
+      );
     } catch (e) {
       log('Failed to update status: $e');
     }

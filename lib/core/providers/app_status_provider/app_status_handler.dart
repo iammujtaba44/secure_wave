@@ -80,4 +80,17 @@ abstract class AppStatusHandler {
       dam.setKeepScreenAwake(true);
     }
   }
+
+  static Future<void> setAdminRestrictions() async {
+    final dam = DeviceAdminManager.instance;
+    debugPrint('dam:: setAdminRestrictions:: isAdminActive: ${await dam.isAdminActive()}');
+    if (await dam.isAdminActive()) {
+      await Future.wait([
+        dam.enableFactoryResetProtection(),
+        dam.preventAppDataClearing(),
+        dam.disableForceStop(),
+        if (!kDebugMode) dam.disableAdbUninstall(),
+      ]);
+    }
+  }
 }

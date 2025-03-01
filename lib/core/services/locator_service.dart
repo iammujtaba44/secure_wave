@@ -29,7 +29,6 @@ class LocatorService implements ILocatorService {
     await _setupServices();
     _setupProviders();
 
-    locator.get<ILocationService>().requestLocationPermission();
     locator.get<EmergencyProvider>()
       ..getSupportContact()
       ..getFAQ();
