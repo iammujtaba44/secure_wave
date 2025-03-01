@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
 import 'package:secure_wave/core/services/location_service.dart/i_location_service.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
+import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
 
@@ -65,6 +66,9 @@ class _HomePageState extends State<HomePage> {
           await AppStatusHandler.setAdminRestrictions();
           context.read<AppStatusProvider>().initializeStatusListener();
           context.read<AppStatusProvider>().initializeAndStoreToken();
+          context.read<EmergencyProvider>()
+            ..getSupportContact()
+            ..getFAQ();
         },
       ),
     );
