@@ -17,8 +17,9 @@ dependencies:
   cupertino_icons: ^1.0.8
   # device_policy_controller: 0.0.3+1
   device_admin_manager:
-    git:
-      url: https://github.com/iammujtaba44/DeviceAdminManager.git
+    path: '../DeviceAdminManager'
+#    git:
+#      url: https://github.com/iammujtaba44/DeviceAdminManager.git
   infinite_binary_ui_kit:
     git:
       url: https://github.com/infinite-binary/UI_Kit.git
@@ -42,6 +43,7 @@ dependencies:
   flutter_foreground_task: ^8.17.0
   android_intent_plus: ^5.3.0
   permission_handler: ^11.3.1
+  fluttertoast: ^8.2.12
 
 dev_dependencies:
   flutter_test:

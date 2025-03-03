@@ -77,6 +77,31 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <activity
+        android:name=".AdminPolicyComplianceActivity"
+        android:exported="true"
+        android:enabled="@bool/provision_mode_compliance_enabled"
+
+        android:theme="@style/Theme.AppCompat"
+        android:permission="android.permission.BIND_DEVICE_ADMIN">
+        <intent-filter>
+            <action android:name="android.app.action.ADMIN_POLICY_COMPLIANCE"/>
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    </activity>
+
+    <activity
+        android:name=".ProvisioningModeActivity"
+        android:enabled="@bool/provision_mode_compliance_enabled"
+        android:exported="true"
+        android:permission="android.permission.BIND_DEVICE_ADMIN"
+
+        android:theme="@style/Theme.AppCompat">
+        <intent-filter>
+            <action android:name="android.app.action.GET_PROVISIONING_MODE" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
