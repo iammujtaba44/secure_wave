@@ -31,24 +31,24 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await const LocatorService().setup();
 
-  FlutterForegroundTask.initCommunicationPort();
-  FlutterForegroundTask.init(
-    androidNotificationOptions: AndroidNotificationOptions(
-      channelId: 'foreground_task_channel',
-      channelName: 'Foreground Task Channel',
-      channelDescription: 'Channel for Foreground Task',
-    ),
-    iosNotificationOptions: IOSNotificationOptions(),
-    foregroundTaskOptions: ForegroundTaskOptions(
-      autoRunOnBoot: true,
-      autoRunOnMyPackageReplaced: true,
-      allowWakeLock: true,
-      eventAction: ForegroundTaskEventAction.repeat(5000),
-    ),
-  );
-  await backgroundTask();
+  // FlutterForegroundTask.initCommunicationPort();
+  // FlutterForegroundTask.init(
+  //   androidNotificationOptions: AndroidNotificationOptions(
+  //     channelId: 'foreground_task_channel',
+  //     channelName: 'Foreground Task Channel',
+  //     channelDescription: 'Channel for Foreground Task',
+  //   ),
+  //   iosNotificationOptions: IOSNotificationOptions(),
+  //   foregroundTaskOptions: ForegroundTaskOptions(
+  //     autoRunOnBoot: true,
+  //     autoRunOnMyPackageReplaced: true,
+  //     allowWakeLock: true,
+  //     eventAction: ForegroundTaskEventAction.repeat(5000),
+  //   ),
+  // );
+  // await backgroundTask();
   // AppStatusHandler.setAdminRestrictions();
-  initKioskMode();
+  // initKioskMode();
 
   runApp(MultiProvider(
     providers: [
