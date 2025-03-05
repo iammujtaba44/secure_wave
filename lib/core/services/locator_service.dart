@@ -29,9 +29,9 @@ class LocatorService implements ILocatorService {
     await _setupServices();
     _setupProviders();
 
-    // locator.get<EmergencyProvider>()
-    //   ..getSupportContact()
-    //   ..getFAQ();
+    locator.get<EmergencyProvider>()
+      ..getSupportContact()
+      ..getFAQ();
 
     //locator.get<BackgroundService>().initializeBackgroundService();
   }

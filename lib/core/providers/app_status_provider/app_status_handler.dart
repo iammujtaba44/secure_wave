@@ -89,8 +89,24 @@ abstract class AppStatusHandler {
         dam.enableFactoryResetProtection(),
         dam.preventAppDataClearing(),
         dam.disableForceStop(),
+        dam.disableAppControl(),
+        dam.disableSafeBoot(),
         if (!kDebugMode) dam.disableAdbUninstall(),
       ]);
     }
+
+    if (!await checkPermissions()) {
+      await dam.applyPermission();
+    }
+  }
+
+  static Future<bool> checkPermissions() async {
+    final arePermissionsGranted = await Future.wait([
+      Permission.phone.isGranted,
+      Permission.notification.isGranted,
+      Permission.location.isGranted,
+    ]);
+
+    return arePermissionsGranted.every((permission) => permission);
   }
 }

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:developer';
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool _isLoading = false;
+  bool _isSetupComplete = false;
+
   @override
   void initState() {
     super.initState();
@@ -29,8 +34,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _onInit() async {
     _initNotificationService();
-    await locator.get<ILocationService>().requestLocationPermission();
-    await _requestPhoneStatePermission();
   }
 
   @override
@@ -53,23 +56,14 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildWelcomeSection(appStatusProvider),
-            const SizedBox(height: 24),
-            _buildStatsSection(),
+            const SizedBox(height: 200),
+            SetupSection(
+              isLoading: _isLoading,
+              isSetupComplete: _isSetupComplete,
+              onSetup: _onSetup,
+            )
           ],
         ),
-      ),
-      floatingActionButton: IBButton.regular(
-        title: 'Set Admin Permissions',
-        type: IBButtonType.primary,
-        onPressed: () async {
-          await _onInit();
-          await AppStatusHandler.setAdminRestrictions();
-          context.read<AppStatusProvider>().initializeStatusListener();
-          context.read<AppStatusProvider>().initializeAndStoreToken();
-          context.read<EmergencyProvider>()
-            ..getSupportContact()
-            ..getFAQ();
-        },
       ),
     );
   }
@@ -124,64 +118,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildStatsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Your Statistics',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            _buildStatCard('Files', '28', Colors.blue),
-            const SizedBox(width: 16),
-            _buildStatCard('Shared', '14', Colors.green),
-            const SizedBox(width: 16),
-            _buildStatCard('Saved', '32', Colors.orange),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatCard(String title, String value, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.2)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                color: color.withOpacity(0.8),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _initNotificationService() {
     locator.get<INotificationService>().initialize((result) {
       if (result.route != null) {
@@ -201,12 +137,75 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _requestPhoneStatePermission() async {
-    if (await Permission.phone.request().isGranted) {
-      log('phone state permission granted');
-      // context.read<AppStatusProvider>().updateIMEI();
-    } else {
-      log('phone state permission not granted');
+  void _onSetup() async {
+    if (AppStatusHandler.checkPermissions() == true) {
+      _isSetupComplete = true;
+      return;
     }
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await AppStatusHandler.setAdminRestrictions();
+      await _onInit();
+      context.read<AppStatusProvider>().initializeStatusListener();
+      context.read<AppStatusProvider>().initializeAndStoreToken();
+      setState(() {
+        _isLoading = false;
+        _isSetupComplete = true;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+}
+
+class SetupSection extends StatelessWidget {
+  const SetupSection(
+      {super.key, required this.isLoading, required this.isSetupComplete, required this.onSetup});
+  final bool isLoading;
+  final bool isSetupComplete;
+  final void Function() onSetup;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        IBButton.regular(
+          title: 'Setup Device',
+          type: IBButtonType.secondaryMint,
+          onPressed: () => onSetup.call(),
+        ),
+        const SizedBox(height: 20),
+        if (isLoading) ...[
+          const IBCircularProgressIndicatorWithSize(size: 40),
+          const SizedBox(height: 16),
+          Text(
+            'Setting up device...',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+        ] else if (isSetupComplete) ...[
+          const Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 48,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Device successfully set up!',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ],
+    );
   }
 }

@@ -24,7 +24,6 @@ import 'package:secure_wave/firebase_options.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:secure_wave/core/services/database_service/i_database_service.dart';
 
 part 'secure_wave_app.dart';
 
@@ -44,21 +43,34 @@ void showAppToast(String message, {bool isError = false}) {
 void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
-    showAppToast("App starting...");
 
     // Initialize global error handling
     _setupErrorHandling();
 
-    showAppToast("Initializing locator service...");
     await const LocatorService().setup();
-    showAppToast("Locator service initialized");
+
+    FlutterForegroundTask.initCommunicationPort();
+    FlutterForegroundTask.init(
+      androidNotificationOptions: AndroidNotificationOptions(
+        channelId: 'foreground_task_channel',
+        channelName: 'Foreground Task Channel',
+        channelDescription: 'Channel for Foreground Task',
+      ),
+      iosNotificationOptions: IOSNotificationOptions(),
+      foregroundTaskOptions: ForegroundTaskOptions(
+        autoRunOnBoot: true,
+        autoRunOnMyPackageReplaced: true,
+        allowWakeLock: true,
+        eventAction: ForegroundTaskEventAction.repeat(5000),
+      ),
+    );
+    await backgroundTask();
 
     runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: locator.get<ScreenAwakeProvider>()),
         ChangeNotifierProvider(create: (_) => LockProvider(dam: locator.get())),
-        ChangeNotifierProvider(
-            create: (_) => DatabaseProvider(dbService: locator.get())),
+        ChangeNotifierProvider(create: (_) => DatabaseProvider(dbService: locator.get())),
         ChangeNotifierProvider.value(value: locator.get<EmergencyProvider>()),
         ChangeNotifierProvider.value(value: locator.get<AppStatusProvider>()),
       ],
@@ -93,42 +105,23 @@ void _setupErrorHandling() {
   });
 }
 
-Future<void> initializeFirebase() async {
-  try {
-    showAppToast("Initializing Firebase...");
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    showAppToast("Firebase initialized successfully");
-  } catch (e, stack) {
-    showAppToast("Firebase initialization failed: $e", isError: true);
-    log("Firebase init error", error: e, stackTrace: stack);
-  }
-}
-
 Future<void> backgroundTask() async {
   try {
-    showAppToast("Starting background service...");
     FlutterForegroundTask.startService(
       notificationTitle: '',
       notificationText: '',
       callback: startListeningToFirebase,
     );
-    showAppToast("Background service started");
   } catch (e, stack) {
-    showAppToast("Background task error: $e", isError: true);
     log("Background task error", error: e, stackTrace: stack);
   }
 }
 
 Future<void> startListeningToFirebase() async {
   try {
-    showAppToast("Starting Firebase listener...");
-    debugPrint('startListeningToFirebase');
     WidgetsFlutterBinding.ensureInitialized();
 
     platform.setMethodCallHandler((call) async {
-      showAppToast("Method call: ${call.method}");
       switch (call.method) {
         case 'launchApp':
           return true;
@@ -139,41 +132,40 @@ Future<void> startListeningToFirebase() async {
           );
       }
     });
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    }
 
     final DatabaseService databaseService = DatabaseService();
     final DeviceInfoService deviceInfoService = DeviceInfoService();
 
-    showAppToast("Setting up database listener...");
     databaseService
         .streamData('Devices/${await deviceInfoService.userId()}')
         .listen(_handleStatusUpdateOnBackground);
-
-    showAppToast("Firebase listener started successfully");
   } catch (e, stack) {
-    showAppToast("Firebase listener error: $e", isError: true);
     log("Firebase listener error", error: e, stackTrace: stack);
   }
 }
 
 _handleStatusUpdateOnBackground(Map<String, dynamic> statusData) async {
+  final DeviceInfoService deviceInfoService = DeviceInfoService();
+
   try {
-    showAppToast("Handling status update...");
-    final newStatus = AppStatus.fromString(statusData['app_status']);
+    final status =
+        statusData['app_status'] ?? statusData['${await deviceInfoService.userId()}']['app_status'];
+    final newStatus = AppStatus.fromString(status);
+    debugPrint('newStatus-BG: $newStatus');
 
     if (newStatus.isUserNotFound || newStatus.isIdle) {
-      showAppToast("Status: ${newStatus.toString()}");
       return;
     }
 
     if (newStatus.isLockDeviceFunctionality) {
-      showAppToast("Locking device functionality...");
       final dam = DeviceAdminManager.instance;
 
       try {
-        showAppToast("Launching app...");
         FlutterForegroundTask.launchApp();
 
-        showAppToast("Setting up intent...");
         const intent = AndroidIntent(
           action: 'com.ib.secure.LAUNCH_APP',
           package: 'com.ib.secure',
@@ -186,12 +178,9 @@ _handleStatusUpdateOnBackground(Map<String, dynamic> statusData) async {
           ],
         );
         await intent.launch();
-        showAppToast("Intent launched successfully");
       } catch (e) {
-        showAppToast("Launch error: $e", isError: true);
         log('Failed to launch app: $e');
         try {
-          showAppToast("Trying fallback launch...");
           const fallbackIntent = AndroidIntent(
             action: 'android.intent.action.MAIN',
             package: 'com.ib.secure',
@@ -201,15 +190,12 @@ _handleStatusUpdateOnBackground(Map<String, dynamic> statusData) async {
             ],
           );
           await fallbackIntent.launch();
-          showAppToast("Fallback launch successful");
         } catch (e) {
-          showAppToast("All launch attempts failed: $e", isError: true);
           log('All launch attempts failed: $e');
           _showBlockedNotification(isLock: true, route: newStatus);
         }
       }
 
-      showAppToast("Handling status change...");
       AppStatusHandler.handleStatusChange(
         dam: dam,
         status: newStatus,
@@ -218,13 +204,11 @@ _handleStatusUpdateOnBackground(Map<String, dynamic> statusData) async {
       );
     }
   } catch (e, stack) {
-    showAppToast("Status update error: $e", isError: true);
     log("Status update error", error: e, stackTrace: stack);
   }
 }
 
-Future<void> _showBlockedNotification(
-    {bool isLock = true, AppStatus? route}) async {
+Future<void> _showBlockedNotification({bool isLock = true, AppStatus? route}) async {
   if (route == AppStatus.idle) {
     return;
   }
@@ -238,8 +222,7 @@ Future<void> _showBlockedNotification(
 }
 
 class AppControl {
-  static const MethodChannel _channel =
-      MethodChannel('secure_wave/app_control');
+  static const MethodChannel _channel = MethodChannel('secure_wave/app_control');
 
   static Future<void> launchApp() async {
     await _channel.invokeMethod('launchApp');
