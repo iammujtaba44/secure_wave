@@ -1,16 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
-
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
-import 'package:secure_wave/core/services/location_service.dart/i_location_service.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
-import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
 
@@ -29,7 +23,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // _onInit();
   }
 
   Future<void> _onInit() async {
@@ -98,7 +91,7 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Welcome Back Test!',
+                'Welcome Back ',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

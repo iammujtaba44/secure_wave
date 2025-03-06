@@ -273,11 +273,9 @@ packages:
   device_admin_manager:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "7de8902fd2cbce18a15e76e5c54f1838d8a8d3bc"
-      url: "https://github.com/iammujtaba44/DeviceAdminManager.git"
-    source: git
+      path: "packages/DeviceAdminManager"
+      relative: true
+    source: path
     version: "0.0.1"
   device_info_plus:
     dependency: "direct main"

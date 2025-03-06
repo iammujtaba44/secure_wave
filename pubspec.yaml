@@ -17,11 +17,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   # device_policy_controller: 0.0.3+1
   device_admin_manager:
-    git:
-      url:
-        https://github.com/iammujtaba44/DeviceAdminManager.git
-
-        #  path: '../DeviceAdminManager'
+    path: "packages/DeviceAdminManager"
   infinite_binary_ui_kit:
     git:
       url: https://github.com/infinite-binary/UI_Kit.git
