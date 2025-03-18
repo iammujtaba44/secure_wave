@@ -48,20 +48,71 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildWelcomeSection(appStatusProvider),
+            _HomeWelcomeBackView(appStatusProvider: appStatusProvider),
             const SizedBox(height: 200),
             SetupSection(
               isLoading: _isLoading,
               isSetupComplete: _isSetupComplete,
               onSetup: _onSetup,
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildWelcomeSection(AppStatusProvider appStatusProvider) {
+  void _initNotificationService() {
+    locator.get<INotificationService>().initialize((result) {
+      if (result.route != null) {
+        AppStatusHandler.handleStatusChange(
+          dam: DeviceAdminManager.instance,
+          status: result.route!,
+        );
+
+        context.read<AppStatusProvider>().updateStatus(result.route!);
+        return;
+      }
+      if (context.router.current.name != NotificationDetailRoute.name) {
+        context.router.push(NotificationDetailRoute(notification: result));
+      } else {
+        context.router.replace(NotificationDetailRoute(notification: result));
+      }
+    });
+  }
+
+  void _onSetup() async {
+    if (AppStatusHandler.checkPermissions() == true) {
+      _isSetupComplete = true;
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await AppStatusHandler.setAdminRestrictions();
+      await _onInit();
+      context.read<AppStatusProvider>().initializeStatusListener();
+      context.read<AppStatusProvider>().initializeAndStoreToken();
+      setState(() {
+        _isLoading = false;
+        _isSetupComplete = true;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+}
+
+class _HomeWelcomeBackView extends StatelessWidget {
+  const _HomeWelcomeBackView({required this.appStatusProvider});
+
+  final AppStatusProvider appStatusProvider;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -109,50 +160,6 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-  }
-
-  void _initNotificationService() {
-    locator.get<INotificationService>().initialize((result) {
-      if (result.route != null) {
-        AppStatusHandler.handleStatusChange(
-          dam: DeviceAdminManager.instance,
-          status: result.route!,
-        );
-
-        context.read<AppStatusProvider>().updateStatus(result.route!);
-        return;
-      }
-      if (context.router.current.name != NotificationDetailRoute.name) {
-        context.router.push(NotificationDetailRoute(notification: result));
-      } else {
-        context.router.replace(NotificationDetailRoute(notification: result));
-      }
-    });
-  }
-
-  void _onSetup() async {
-    if (AppStatusHandler.checkPermissions() == true) {
-      _isSetupComplete = true;
-      return;
-    }
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      await AppStatusHandler.setAdminRestrictions();
-      await _onInit();
-      context.read<AppStatusProvider>().initializeStatusListener();
-      context.read<AppStatusProvider>().initializeAndStoreToken();
-      setState(() {
-        _isLoading = false;
-        _isSetupComplete = true;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 }
 

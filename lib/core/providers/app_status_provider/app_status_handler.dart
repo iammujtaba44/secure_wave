@@ -98,6 +98,14 @@ abstract class AppStatusHandler {
     if (!await checkPermissions()) {
       await dam.applyPermission();
     }
+
+    //TODO: Add FRP section
+
+    // final googleAccountFRP = await dam.enableGoogleAccountFRP(['moiezdevtest@gmail.com']);
+    // debugPrint('dam:: setAdminRestrictions:: googleAccountFRP: $googleAccountFRP');
+
+    final automaticSystemUpdates = await dam.setAutomaticSystemUpdates();
+    debugPrint('dam:: setAdminRestrictions:: automaticSystemUpdates: $automaticSystemUpdates');
   }
 
   static Future<bool> checkPermissions() async {

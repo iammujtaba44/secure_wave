@@ -309,4 +309,12 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
   Future<bool> applyPermission();
 
   Future<bool> disableAppControl();
+
+  Future<bool> enableGoogleAccountFRP(List<String> googleAccounts);
+
+  Future<bool> isFrpEnabled();
+
+  Future<List<String>> getFrpAccounts();
+
+  Future<dynamic> setAutomaticSystemUpdates();
 }

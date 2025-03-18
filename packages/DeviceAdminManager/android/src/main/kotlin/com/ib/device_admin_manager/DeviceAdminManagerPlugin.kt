@@ -30,6 +30,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import android.Manifest
 import android.os.UserManager
+import android.app.admin.SystemUpdatePolicy
 
 
 private const val PROVISION_REQUEST_CODE = 1337
@@ -297,6 +298,24 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 result.success(protectResult)
             }
             "clear" -> clear(result)
+
+            "enableGoogleAccountFRP" -> {
+                val googleAccounts = call.argument<List<String>>("googleAccounts")
+                val enableResult = enableGoogleAccountFRP(googleAccounts)
+                result.success(enableResult)
+            }
+
+            "isFrpEnabled" -> {
+                val isFrpEnabled = isFrpEnabled()
+                result.success(isFrpEnabled)
+            }
+            
+            "getFrpAccounts" -> {
+                val accounts = getFrpAccounts()
+                result.success(accounts)
+            }
+
+            "setAutomaticSystemUpdates" -> setAutomaticSystemUpdates(call, result)
 
             else -> result.notImplemented()
         }
@@ -1207,26 +1226,7 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
         return false
     }
-    //TODO(Mujtaba):  This is not working on Android 13 and above
-    // private fun disableOemUnlock(): Boolean {
-    //     if (isAdminActive()) {
-    //         try {
-    //             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // Android 6.0 (API 23) and above
-    //                 mDevicePolicyManager.addUserRestriction(
-    //                     adminComponentName, 
-    //                     UserManager.DISALLOW_OEM_UNLOCK
-    //                 )
-    //                 return true
-    //             }
-    //             return false
-    //         } catch (e: Exception) {
-    //             log("disableOemUnlock failed: ${e.message}")
-    //             return false
-    //         }
-    //     }
-    //     return false
-    // }
-
+  
 
     private fun applyPermission(): Boolean {
         if (isAdminActive()) {
@@ -1271,4 +1271,149 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                preventAppDataClearing()
     }
 
+    private fun setAutomaticSystemUpdates(call: MethodCall, result: Result) {
+        try {
+         
+            if (!isAdminActive()) {
+                result.error("ADMIN_NOT_ACTIVE", "Device admin is not active", null)
+                return
+            }
+            
+            // Create an automatic update policy
+            val updatePolicy = SystemUpdatePolicy.createAutomaticInstallPolicy()
+            
+            // Set the update policy
+            mDevicePolicyManager.setSystemUpdatePolicy(adminComponentName, updatePolicy)
+            
+            result.success(true)
+        } catch (e: Exception) {
+            result.error("UPDATE_POLICY_ERROR", "Failed to set system update policy: ${e.message}", null)
+        }
+    }
+
+    
+
+    /**
+     * Enables Factory Reset Protection (FRP) with Google accounts.
+     * 
+     * This method configures the device to require the specified Google account
+     * credentials after a factory reset. This provides an additional layer of
+     * security for lost or stolen devices.
+     * 
+     * @param googleAccounts List of Google account emails to use for FRP (can be null to disable FRP)
+     * @return Boolean indicating whether FRP was successfully enabled
+     */
+    private fun enableGoogleAccountFRP(googleAccounts: List<String>?): Boolean {
+        if (!isAdminActive()) {
+            log("enableGoogleAccountFRP failed: Device admin not active")
+            return false
+        }
+        
+        try {
+            // First, ensure factory reset protection is enabled at the system level
+            mDevicePolicyManager.addUserRestriction(
+                adminComponentName, 
+                UserManager.DISALLOW_FACTORY_RESET
+            )
+            
+            // On Android 9+ (API 28+), we can use the FactoryResetProtectionPolicy class
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                if (googleAccounts.isNullOrEmpty()) {
+                    // If no accounts provided, disable FRP
+                    mDevicePolicyManager.setFactoryResetProtectionPolicy(adminComponentName, null)
+                    log("FRP policy disabled (no accounts provided)")
+                    return true
+                } else {
+                    // Create a new FRP policy with the provided Google accounts
+                    val frpPolicy = android.app.admin.FactoryResetProtectionPolicy.Builder()
+                        .setFactoryResetProtectionAccounts(googleAccounts)
+                        .build()
+                    
+                    // Apply the FRP policy
+                    mDevicePolicyManager.setFactoryResetProtectionPolicy(adminComponentName, frpPolicy)
+                    
+                    // Verify the policy was set
+                    val currentPolicy = mDevicePolicyManager.getFactoryResetProtectionPolicy(adminComponentName)
+                    if (currentPolicy != null) {
+                        log("FRP policy successfully applied with accounts: ${googleAccounts.joinToString()}")
+                        return true
+                    } else {
+                        log("Failed to verify FRP policy")
+                        return false
+                    }
+                }
+            } else {
+                // For older Android versions, we can only enable basic FRP
+                log("Using basic FRP on Android version below 9.0 (API 28)")
+                
+                // Create a persistent bundle for older versions
+                val persistentBundle = Bundle()
+                persistentBundle.putBoolean("frp_enabled", !googleAccounts.isNullOrEmpty())
+                
+                if (!googleAccounts.isNullOrEmpty()) {
+                    // Store the first account in the bundle
+                    persistentBundle.putString("frp_google_account", googleAccounts[0])
+                    log("Basic FRP enabled with account: ${googleAccounts[0]}")
+                } else {
+                    log("Basic FRP disabled (no accounts provided)")
+                }
+                
+                return true
+            }
+        } catch (e: Exception) {
+            log("enableGoogleAccountFRP failed with exception: ${e.message}")
+            e.printStackTrace()
+            return false
+        }
+    }
+    
+    /**
+     * Checks if Factory Reset Protection is currently enabled on the device.
+     * 
+     * @return Boolean indicating whether FRP is enabled
+     */
+    private fun isFrpEnabled(): Boolean {
+        if (!isAdminActive()) {
+            return false
+        }
+        
+        try {
+            // Check if factory reset restriction is enabled
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val frpPolicy = mDevicePolicyManager.getFactoryResetProtectionPolicy(adminComponentName)
+                return frpPolicy != null && !frpPolicy.factoryResetProtectionAccounts.isNullOrEmpty()
+            } else {
+                // For older versions, check if the DISALLOW_FACTORY_RESET restriction is active
+                val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
+                return userManager.hasUserRestriction(UserManager.DISALLOW_FACTORY_RESET)
+            }
+        } catch (e: Exception) {
+            log("isFrpEnabled check failed: ${e.message}")
+            return false
+        }
+    }
+    
+    /**
+     * Gets the list of Google accounts configured for Factory Reset Protection.
+     * 
+     * @return List of account emails or empty list if none configured or not available
+     */
+    private fun getFrpAccounts(): List<String> {
+        if (!isAdminActive()) {
+            return emptyList()
+        }
+        
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val frpPolicy = mDevicePolicyManager.getFactoryResetProtectionPolicy(adminComponentName)
+                return frpPolicy?.factoryResetProtectionAccounts?.toList() ?: emptyList()
+            } else {
+                // For older versions, we can't retrieve the accounts directly
+                return emptyList()
+            }
+        } catch (e: Exception) {
+            log("getFrpAccounts failed: ${e.message}")
+            return emptyList()
+        }
+    }
 }

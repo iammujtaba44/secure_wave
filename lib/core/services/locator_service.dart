@@ -24,7 +24,9 @@ class LocatorService implements ILocatorService {
   const LocatorService();
   @override
   Future<void> setup() async {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    }
     _registerRouters();
     await _setupServices();
     _setupProviders();

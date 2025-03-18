@@ -252,4 +252,30 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   Future<bool> disableAppControl() async {
     return await _methodChannel.invokeMethod('disableAppControl');
   }
+
+  @override
+  Future<bool> enableGoogleAccountFRP(List<String> googleAccounts) async {
+    return await _methodChannel
+        .invokeMethod('enableGoogleAccountFRP', {'googleAccounts': googleAccounts});
+  }
+
+  @override
+  Future<bool> isFrpEnabled() async {
+    return await _methodChannel.invokeMethod('isFrpEnabled');
+  }
+
+  @override
+  Future<List<String>> getFrpAccounts() async {
+    final result = await _methodChannel.invokeMethod('getFrpAccounts');
+    // Convert the List<dynamic> or List<Object?> to List<String>
+    if (result is List) {
+      return result.map((item) => item.toString()).toList();
+    }
+    return [];
+  }
+
+  @override
+  Future<dynamic> setAutomaticSystemUpdates() async {
+    return await _methodChannel.invokeMethod('setAutomaticSystemUpdates');
+  }
 }

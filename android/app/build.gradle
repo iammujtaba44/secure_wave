@@ -12,7 +12,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.ib.secure"
-    compileSdk = 34 //flutter.compileSdkVersion
+    compileSdk = 34 // Keep at 34 for now
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
