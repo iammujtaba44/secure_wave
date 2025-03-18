@@ -1,0 +1,28 @@
+name: device_admin_manager_example
+description: Demonstrates how to use the device_admin_manager plugin.
+
+publish_to: "none"
+
+environment:
+  sdk: ">=3.0.5 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  device_admin_manager:
+    path: ../
+
+  cupertino_icons: ^1.0.2
+  provider: ^6.0.5
+
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true

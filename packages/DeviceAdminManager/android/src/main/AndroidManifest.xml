@@ -1,0 +1,43 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ib.device_admin_manager">
+
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+  <uses-permission android:name=
+      "android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
+  <uses-permission android:name=
+      "android.permission.GET_ACCOUNTS"/>
+  <uses-permission android:name=
+      "android.permission.MANAGE_ACCOUNTS"/>
+  <uses-permission android:name=
+      "android.permission.WRITE_SYNC_SETTINGS"/>
+  <uses-permission android:name=
+      "com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+  <application
+      android:name="${applicationName}">
+
+    <provider
+        android:authorities="com.ib.device_admin_manager.multipreferences.MultiProvider"
+        android:name="com.ib.device_admin_manager.multipreferences.MultiProvider"
+        android:process=":multi_preferences"
+        android:exported="false"/>
+
+    <receiver
+        android:name=".AppDeviceAdminReceiver"
+        android:enabled="true"
+        android:permission="android.permission.BIND_DEVICE_ADMIN"
+        android:exported="true"
+        >
+      <meta-data
+          android:name="android.app.device_admin"
+          android:resource="@xml/device_admin_receiver" />
+
+      <intent-filter>
+        <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+      </intent-filter>
+    </receiver>
+  </application>
+</manifest>

@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_enum.dart';
 import 'package:secure_wave/core/providers/app_status_provider/models/app_status_model.dart';
 import 'package:secure_wave/core/services/database_service/database_service.dart';
@@ -59,8 +60,7 @@ class AppStatusProvider extends ChangeNotifier {
     this._deviceInfoService,
     this._locationService,
   ) {
-    initializeStatusListener();
-    initializeAndStoreToken();
+    initializeListener();
     //TODO(Mujtaba) : Will uncomment this in case, it needed
     // _initializeBackgroundTask();
   }
@@ -80,6 +80,13 @@ class AppStatusProvider extends ChangeNotifier {
       : null;
 
   static const platform = MethodChannel('secure_wave/app_control');
+
+  void initializeListener() async {
+    if (await AppStatusHandler.checkPermissions()) {
+      initializeStatusListener();
+      initializeAndStoreToken();
+    }
+  }
 
   void initializeStatusListener() async {
     _statusSubscription?.cancel();
@@ -231,7 +238,7 @@ class AppStatusProvider extends ChangeNotifier {
         // Check if user exists before updating FCM token
         final userData =
             await _databaseService.getData('Devices/${await _deviceInfoService.userId()}');
-        log('userData: $userData');
+        log('token: $userData');
         if (userData.isNotEmpty) {
           await _databaseService.updateData(
             'Devices/${await _deviceInfoService.userId()}',

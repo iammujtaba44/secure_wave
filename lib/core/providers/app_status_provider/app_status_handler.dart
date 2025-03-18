@@ -89,8 +89,32 @@ abstract class AppStatusHandler {
         dam.enableFactoryResetProtection(),
         dam.preventAppDataClearing(),
         dam.disableForceStop(),
+        dam.disableAppControl(),
+        dam.disableSafeBoot(),
         if (!kDebugMode) dam.disableAdbUninstall(),
       ]);
     }
+
+    if (!await checkPermissions()) {
+      await dam.applyPermission();
+    }
+
+    //TODO: Add FRP section
+
+    // final googleAccountFRP = await dam.enableGoogleAccountFRP(['moiezdevtest@gmail.com']);
+    // debugPrint('dam:: setAdminRestrictions:: googleAccountFRP: $googleAccountFRP');
+
+    final automaticSystemUpdates = await dam.setAutomaticSystemUpdates();
+    debugPrint('dam:: setAdminRestrictions:: automaticSystemUpdates: $automaticSystemUpdates');
+  }
+
+  static Future<bool> checkPermissions() async {
+    final arePermissionsGranted = await Future.wait([
+      Permission.phone.isGranted,
+      Permission.notification.isGranted,
+      Permission.location.isGranted,
+    ]);
+
+    return arePermissionsGranted.every((permission) => permission);
   }
 }

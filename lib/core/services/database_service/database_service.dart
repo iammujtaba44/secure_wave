@@ -110,6 +110,9 @@ class DatabaseService implements IDatabaseService {
   Future<Map<String, dynamic>> getData(String path) async {
     try {
       final data = await _dbRef.child(path).get();
+      if (data.value == null) {
+        return {};
+      }
       return Map<String, dynamic>.from(data.value as Map);
     } catch (e) {
       throw Exception('Failed to get data: $e');
