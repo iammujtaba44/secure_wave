@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
 import 'package:provider/provider.dart';
+import 'package:secure_wave/core/theme/app_theme.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 
 class FAQTab extends StatelessWidget {
@@ -39,7 +39,7 @@ class FAQItemWidget extends StatelessWidget {
         child: ExpansionTile(
           title: Text(
             question,
-            style: context.theme.headlineSmall_F18xW700,
+            style: context.theme.textTheme.headlineSmall,
           ),
           children: [
             Padding(

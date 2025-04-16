@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
+import 'package:secure_wave/core/theme/app_button.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/features/emergency/widgets/emergency_card.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
@@ -39,10 +39,8 @@ class AlertTab extends StatelessWidget {
   }
 
   Widget _buildPaymentButton(BuildContext context) {
-    return IBButton.regular(
-      title: 'Make Payment Now',
-      type: IBButtonType.primary,
-      backgroundColor: Colors.green,
+    return AppButton(
+      text: 'Make Payment Now',
       onPressed: () async {
         // Implement payment logic
         await locator.get<DeviceAdminManager>().unlockApp();
@@ -52,10 +50,8 @@ class AlertTab extends StatelessWidget {
   }
 
   Widget _buildSupportButton(BuildContext context, String? contact) {
-    return IBButton.regular(
-      title: 'Contact Support',
-      type: IBButtonType.primary,
-      backgroundColor: Colors.blue,
+    return AppButton(
+      text: 'Contact Support',
       onPressed: () => _showSupportDialog(context, contact),
     );
   }

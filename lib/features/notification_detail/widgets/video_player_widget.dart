@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:infinite_binary_ui_kit/resources/resources.dart';
+import 'package:secure_wave/core/theme/app_colors.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
@@ -93,10 +93,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> with RouteAware {
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: IBColors.Black3,
+                  color: AppColors.black,
                   boxShadow: [
                     BoxShadow(
-                      color: IBColors.Black3.withValues(alpha: 0.5),
+                      color: AppColors.black.withValues(alpha: 0.5),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

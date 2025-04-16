@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
+import 'package:secure_wave/main.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
+import 'package:secure_wave/core/theme/app_button.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -33,30 +35,31 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final appStatusProvider = context.watch<AppStatusProvider>();
     return Scaffold(
-      appBar: AppBar(
-        title: GestureDetector(
-            onTap: () async {
-              //TODO: Add device admin manager Route
-              // context.router.push(const DeviceAdminManagerRoute());
-            },
-            child: const Text('Secure Wave')),
-        backgroundColor: Colors.blue,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _HomeWelcomeBackView(appStatusProvider: appStatusProvider),
-            const SizedBox(height: 200),
-            SetupSection(
+      // appBar: AppBar(
+      //   title: GestureDetector(
+      //       onTap: () async {
+      //         //TODO: Add device admin manager Route
+      //         // context.router.push(const DeviceAdminManagerRoute());
+      //       },
+      //       child: const Text('Secure Wave')),
+      //   backgroundColor: Colors.blue,
+      //   elevation: 0,
+      // ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          //TODO: Add welcome back view
+          // _HomeWelcomeBackView(appStatusProvider: appStatusProvider),
+          // const SizedBox(height: 200),
+          Center(
+            child: SetupSection(
               isLoading: _isLoading,
               isSetupComplete: _isSetupComplete,
               onSetup: _onSetup,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -98,6 +101,8 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
         _isSetupComplete = true;
       });
+
+      await backgroundTask();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -174,23 +179,19 @@ class SetupSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        IBButton.regular(
-          title: 'Setup Device',
-          type: IBButtonType.secondaryMint,
+        AppButton(
+          text: 'Setup Device',
+          type: ButtonType.secondary,
           onPressed: () => onSetup.call(),
         ),
         const SizedBox(height: 20),
-        if (isLoading) ...[
-          const IBCircularProgressIndicatorWithSize(size: 40),
-          const SizedBox(height: 16),
-          Text(
-            'Setting up device...',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
+        if (isLoading)
+          const SizedBox(
+            width: 40,
+            height: 40,
+            child: CircularProgressIndicator(),
           ),
-        ] else if (isSetupComplete) ...[
+        if (isSetupComplete) ...[
           const Icon(
             Icons.check_circle,
             color: Colors.green,

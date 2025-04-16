@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
+import 'package:secure_wave/core/theme/app_theme.dart';
 
 class NotificationDetailItemWidget extends StatelessWidget {
   const NotificationDetailItemWidget({
@@ -21,13 +21,13 @@ class NotificationDetailItemWidget extends StatelessWidget {
           padding: const EdgeInsets.only(left: 10),
           child: Text(
             keyText,
-            style: context.theme.headlineSmall_F18xW700,
+            style: context.theme.textTheme.bodySmall,
           ),
         ),
         NotificationViewWidget(
           child: Text(
             valueText,
-            style: context.theme.bodyLarge,
+            style: context.theme.textTheme.bodyMedium,
           ),
         )
       ],

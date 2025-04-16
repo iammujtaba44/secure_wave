@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:infinite_binary_ui_kit/infinite_binary_ui_kit.dart';
+import 'package:secure_wave/core/theme/app_theme.dart';
 import 'package:secure_wave/features/emergency/view/tabs/alert_tab.dart';
 import 'package:secure_wave/features/emergency/view/tabs/faq_tab.dart';
 import 'package:secure_wave/features/emergency/view/tabs/notifications_tab.dart';
@@ -22,7 +22,7 @@ class EmergencyPage extends StatelessWidget {
             backgroundColor: Colors.red,
             title: Text(
               'EMERGENCY NOTICE',
-              style: context.headlineSmallStyle?.copyWith(
+              style: context.theme.textTheme.headlineSmall?.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:infinite_binary_ui_kit/widgets/widgets.dart';
+import 'package:secure_wave/core/theme/app_button.dart';
 
 class PolicyAction {
   final String label;
@@ -14,13 +14,12 @@ class PolicyAction {
     this.didPressed,
   });
 
-  IBButton button(BuildContext context) => IBButton.regular(
-        type: IBButtonType.primary,
-        backgroundColor: Colors.green,
-        title: label,
+  Widget button(BuildContext context) => AppButton(
+        text: label,
         onPressed: () async {
           await task(context);
           didPressed?.call();
         },
+        type: ButtonType.primary,
       );
 }

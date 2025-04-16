@@ -7,11 +7,14 @@ class EmergencyCard extends StatelessWidget {
     required this.description,
     this.amountDue,
     this.dueDate,
+    this.actionButton,
   });
+
   final String title;
   final String description;
   final String? amountDue;
   final String? dueDate;
+  final Widget? actionButton;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +28,11 @@ class EmergencyCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.warning_amber_rounded, color: Colors.red, size: 32),
-                SizedBox(width: 8),
+                const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 32),
+                const SizedBox(width: 8),
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.red,
@@ -39,11 +42,15 @@ class EmergencyCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              '$description : ',
+              description,
               style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 8),
-            _buildAmountInfo(),
+            const SizedBox(height: 16),
+            if (amountDue != null || dueDate != null) _buildAmountInfo(),
+            if (actionButton != null) ...[
+              const SizedBox(height: 16),
+              Center(child: actionButton!),
+            ],
           ],
         ),
       ),
@@ -64,18 +71,18 @@ class EmergencyCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Amount Due:', style: TextStyle(fontSize: 16)),
-                Text('$amountDue', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text('Amount Due:', style: TextStyle(fontSize: 16)),
+                Text(amountDue!, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ],
             ),
           ],
           if (dueDate != null) ...[
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Due Date:', style: TextStyle(fontSize: 16)),
-                Text('$dueDate', style: TextStyle(fontSize: 16, color: Colors.red)),
+                const Text('Due Date:', style: TextStyle(fontSize: 16)),
+                Text(dueDate!, style: const TextStyle(fontSize: 16, color: Colors.red)),
               ],
             ),
           ],

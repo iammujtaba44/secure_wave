@@ -6,6 +6,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:device_admin_manager/device_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -29,25 +30,27 @@ part 'secure_wave_app.dart';
 
 const platform = MethodChannel('secure_wave/app_control');
 
-void showAppToast(String message, {bool isError = false}) {
-  Fluttertoast.showToast(
-    msg: message,
-    toastLength: Toast.LENGTH_LONG,
-    gravity: ToastGravity.BOTTOM,
-    backgroundColor: isError ? Colors.red : Colors.blue,
-    textColor: Colors.white,
-    fontSize: 16.0,
-  );
-}
-
 void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
 
+    await const LocatorService().setup();
+
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FirebaseCrashlytics.instance.recordFlutterError(details);
+      log("Flutter Error: ${details.exception}", stackTrace: details.stack);
+    };
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      log("Platform Error: $error", stackTrace: stack);
+      return true;
+    };
+
     // Initialize global error handling
     _setupErrorHandling();
-
-    await const LocatorService().setup();
 
     FlutterForegroundTask.initCommunicationPort();
     FlutterForegroundTask.init(
@@ -77,41 +80,34 @@ void main() async {
       child: const SecureWaveApp(),
     ));
   } catch (e, stack) {
-    showAppToast("Crash in main(): $e", isError: true);
+    FirebaseCrashlytics.instance.recordError(e, stack, fatal: true);
     log("Main initialization error", error: e, stackTrace: stack);
   }
 }
 
 void _setupErrorHandling() {
-  // Handle Flutter framework errors
-  FlutterError.onError = (FlutterErrorDetails details) {
-    showAppToast("Flutter Error: ${details.exception}", isError: true);
-    log("Flutter Error: ${details.exception}", stackTrace: details.stack);
-  };
-
-  // Handle platform errors
-  PlatformDispatcher.instance.onError = (error, stack) {
-    showAppToast("Platform Error: $error", isError: true);
-    log("Platform Error: $error", stackTrace: stack);
-    return true;
-  };
-
   // Handle async errors
   runZonedGuarded(() async {
     // Your initialization code here
   }, (error, stackTrace) {
-    showAppToast("Async Error: $error", isError: true);
+    FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: true);
     log("Async Error: $error", stackTrace: stackTrace);
   });
 }
 
 Future<void> backgroundTask() async {
   try {
-    FlutterForegroundTask.startService(
-      notificationTitle: '',
-      notificationText: '',
-      callback: startListeningToFirebase,
-    );
+    final databaseService = DatabaseService();
+    final notificationSettings = await databaseService.getNotificationSettings();
+    if (await FlutterForegroundTask.isRunningService) {
+      await FlutterForegroundTask.restartService();
+    } else {
+      await FlutterForegroundTask.startService(
+        notificationTitle: notificationSettings['notification_title'],
+        notificationText: notificationSettings['notification_desc'],
+        callback: startListeningToFirebase,
+      );
+    }
   } catch (e, stack) {
     log("Background task error", error: e, stackTrace: stack);
   }
@@ -120,6 +116,13 @@ Future<void> backgroundTask() async {
 Future<void> startListeningToFirebase() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
+
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    }
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+    await FirebaseCrashlytics.instance.setCustomKey('execution_mode', 'background_service');
 
     platform.setMethodCallHandler((call) async {
       switch (call.method) {
@@ -132,9 +135,6 @@ Future<void> startListeningToFirebase() async {
           );
       }
     });
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    }
 
     final DatabaseService databaseService = DatabaseService();
     final DeviceInfoService deviceInfoService = DeviceInfoService();
@@ -143,6 +143,13 @@ Future<void> startListeningToFirebase() async {
         .streamData('Devices/${await deviceInfoService.userId()}')
         .listen(_handleStatusUpdateOnBackground);
   } catch (e, stack) {
+    // Record background service errors in Crashlytics
+    FirebaseCrashlytics.instance.recordError(
+      e,
+      stack,
+      fatal: true,
+      reason: 'Background service initialization failed',
+    );
     log("Firebase listener error", error: e, stackTrace: stack);
   }
 }
@@ -151,8 +158,14 @@ _handleStatusUpdateOnBackground(Map<String, dynamic> statusData) async {
   final DeviceInfoService deviceInfoService = DeviceInfoService();
 
   try {
-    final status =
-        statusData['app_status'] ?? statusData['${await deviceInfoService.userId()}']['app_status'];
+    var status = statusData['app_status'] ?? 'idle';
+
+    final userIdBasedStatus = statusData['${await deviceInfoService.userId()}'];
+
+    if (userIdBasedStatus != null) {
+      status = userIdBasedStatus['app_status'];
+    }
+
     final newStatus = AppStatus.fromString(status);
     debugPrint('newStatus-BG: $newStatus');
 
@@ -205,6 +218,7 @@ _handleStatusUpdateOnBackground(Map<String, dynamic> statusData) async {
     }
   } catch (e, stack) {
     log("Status update error", error: e, stackTrace: stack);
+    FirebaseCrashlytics.instance.recordError(e, stack, fatal: true);
   }
 }
 
@@ -229,39 +243,13 @@ class AppControl {
   }
 }
 
-// Future<void> handleProvisioningComplete() async {
-//   try {
-//     showAppToast("Starting device provisioning...");
-
-//     final dam = locator.get<DeviceAdminManager>();
-//     showAppToast("Setting as profile owner...");
-//     await dam.setAsProfileOwner();
-
-//     // Add delay to ensure profile owner is set
-//     await Future.delayed(const Duration(seconds: 1));
-
-//     showAppToast("Initializing Firebase...");
-//     await initializeFirebase();
-
-//     showAppToast("Initializing background tasks...");
-//     await initializeBackgroundTasks();
-
-//     showAppToast("Device provisioning completed successfully");
-//   } catch (e, stack) {
-//     showAppToast("Provisioning error: $e", isError: true);
-//     log("Provisioning error", error: e, stackTrace: stack);
-//   }
-// }
-
-// void onQRCodeScanned(String result) async {
-//   try {
-//     // Handle QR code result
-//     // ...
-
-//     // Handle provisioning completion
-//     await handleProvisioningComplete();
-//   } catch (e, stack) {
-//     log("QR code handling error", error: e, stackTrace: stack);
-//     showAppToast("QR code error: $e", isError: true);
-//   }
-// }
+void showAppToast(String message, {bool isError = false}) {
+  Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: isError ? Colors.red : Colors.blue,
+    textColor: Colors.white,
+    fontSize: 16.0,
+  );
+}

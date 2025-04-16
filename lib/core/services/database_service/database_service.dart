@@ -147,4 +147,24 @@ class DatabaseService implements IDatabaseService {
       return Stream.value({'app_status': AppStatus.idle.name});
     }
   }
+
+  // Add method to get notification settings
+  Future<Map<String, dynamic>> getNotificationSettings() async {
+    try {
+      final snapshot = await _dbRef.child('support').get();
+      if (snapshot.exists) {
+        return Map<String, dynamic>.from(snapshot.value as Map);
+      }
+      return {
+        'title': 'Secure Wave',
+        'text': 'Service is running',
+      };
+    } catch (e) {
+      log('Error fetching notification settings: $e');
+      return {
+        'title': 'Secure Wave',
+        'text': 'Service is running',
+      };
+    }
+  }
 }
