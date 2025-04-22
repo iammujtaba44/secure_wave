@@ -20,6 +20,7 @@ import 'package:secure_wave/core/providers/database_provider.dart';
 import 'package:secure_wave/core/services/database_service/database_service.dart';
 import 'package:secure_wave/core/services/device_info_service.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
+import 'package:secure_wave/features/companies/providers/company_provider.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/firebase_options.dart';
 import 'package:secure_wave/routes/app_routes.dart';
@@ -76,6 +77,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => DatabaseProvider(dbService: locator.get())),
         ChangeNotifierProvider.value(value: locator.get<EmergencyProvider>()),
         ChangeNotifierProvider.value(value: locator.get<AppStatusProvider>()),
+        ChangeNotifierProvider.value(value: locator.get<CompanyProvider>()),
       ],
       child: const SecureWaveApp(),
     ));
@@ -139,9 +141,7 @@ Future<void> startListeningToFirebase() async {
     final DatabaseService databaseService = DatabaseService();
     final DeviceInfoService deviceInfoService = DeviceInfoService();
 
-    databaseService
-        .streamData('Devices/${await deviceInfoService.userId()}')
-        .listen(_handleStatusUpdateOnBackground);
+    databaseService.streamData('Devices/${await deviceInfoService.userId()}').listen(_handleStatusUpdateOnBackground);
   } catch (e, stack) {
     // Record background service errors in Crashlytics
     FirebaseCrashlytics.instance.recordError(

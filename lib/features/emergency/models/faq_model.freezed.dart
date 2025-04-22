@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,95 +10,74 @@ part of 'faq_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-FAQModel _$FAQModelFromJson(Map<String, dynamic> json) {
-  return _FAQModel.fromJson(json);
-}
 
 /// @nodoc
 mixin _$FAQModel {
-  String? get description => throw _privateConstructorUsedError;
-  String? get title => throw _privateConstructorUsedError;
+  String? get description;
+  String? get title;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $FAQModelCopyWith<FAQModel> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $FAQModelCopyWith<$Res> {
-  factory $FAQModelCopyWith(FAQModel value, $Res Function(FAQModel) then) =
-      _$FAQModelCopyWithImpl<$Res, FAQModel>;
-  @useResult
-  $Res call({String? description, String? title});
-}
-
-/// @nodoc
-class _$FAQModelCopyWithImpl<$Res, $Val extends FAQModel>
-    implements $FAQModelCopyWith<$Res> {
-  _$FAQModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of FAQModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $FAQModelCopyWith<FAQModel> get copyWith =>
+      _$FAQModelCopyWithImpl<FAQModel>(this as FAQModel, _$identity);
+
+  /// Serializes this FAQModel to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? description = freezed,
-    Object? title = freezed,
-  }) {
-    return _then(_value.copyWith(
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      title: freezed == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is FAQModel &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.title, title) || other.title == title));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, description, title);
+
+  @override
+  String toString() {
+    return 'FAQModel(description: $description, title: $title)';
   }
 }
 
 /// @nodoc
-abstract class _$$FAQModelImplCopyWith<$Res>
-    implements $FAQModelCopyWith<$Res> {
-  factory _$$FAQModelImplCopyWith(
-          _$FAQModelImpl value, $Res Function(_$FAQModelImpl) then) =
-      __$$FAQModelImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $FAQModelCopyWith<$Res> {
+  factory $FAQModelCopyWith(FAQModel value, $Res Function(FAQModel) _then) =
+      _$FAQModelCopyWithImpl;
   @useResult
   $Res call({String? description, String? title});
 }
 
 /// @nodoc
-class __$$FAQModelImplCopyWithImpl<$Res>
-    extends _$FAQModelCopyWithImpl<$Res, _$FAQModelImpl>
-    implements _$$FAQModelImplCopyWith<$Res> {
-  __$$FAQModelImplCopyWithImpl(
-      _$FAQModelImpl _value, $Res Function(_$FAQModelImpl) _then)
-      : super(_value, _then);
+class _$FAQModelCopyWithImpl<$Res> implements $FAQModelCopyWith<$Res> {
+  _$FAQModelCopyWithImpl(this._self, this._then);
 
+  final FAQModel _self;
+  final $Res Function(FAQModel) _then;
+
+  /// Create a copy of FAQModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? description = freezed,
     Object? title = freezed,
   }) {
-    return _then(_$FAQModelImpl(
+    return _then(_self.copyWith(
       description: freezed == description
-          ? _value.description
+          ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
       title: freezed == title
-          ? _value.title
+          ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
@@ -106,63 +86,87 @@ class __$$FAQModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$FAQModelImpl implements _FAQModel {
-  const _$FAQModelImpl({this.description, this.title});
-
-  factory _$FAQModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$FAQModelImplFromJson(json);
+class _FAQModel implements FAQModel {
+  const _FAQModel({this.description, this.title});
+  factory _FAQModel.fromJson(Map<String, dynamic> json) =>
+      _$FAQModelFromJson(json);
 
   @override
   final String? description;
   @override
   final String? title;
 
+  /// Create a copy of FAQModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'FAQModel(description: $description, title: $title)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$FAQModelCopyWith<_FAQModel> get copyWith =>
+      __$FAQModelCopyWithImpl<_FAQModel>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$FAQModelToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$FAQModelImpl &&
+            other is _FAQModel &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.title, title) || other.title == title));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, description, title);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$FAQModelImplCopyWith<_$FAQModelImpl> get copyWith =>
-      __$$FAQModelImplCopyWithImpl<_$FAQModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$FAQModelImplToJson(
-      this,
-    );
+  String toString() {
+    return 'FAQModel(description: $description, title: $title)';
   }
 }
 
-abstract class _FAQModel implements FAQModel {
-  const factory _FAQModel({final String? description, final String? title}) =
-      _$FAQModelImpl;
-
-  factory _FAQModel.fromJson(Map<String, dynamic> json) =
-      _$FAQModelImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$FAQModelCopyWith<$Res>
+    implements $FAQModelCopyWith<$Res> {
+  factory _$FAQModelCopyWith(_FAQModel value, $Res Function(_FAQModel) _then) =
+      __$FAQModelCopyWithImpl;
   @override
-  String? get description;
-  @override
-  String? get title;
-  @override
-  @JsonKey(ignore: true)
-  _$$FAQModelImplCopyWith<_$FAQModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call({String? description, String? title});
 }
+
+/// @nodoc
+class __$FAQModelCopyWithImpl<$Res> implements _$FAQModelCopyWith<$Res> {
+  __$FAQModelCopyWithImpl(this._self, this._then);
+
+  final _FAQModel _self;
+  final $Res Function(_FAQModel) _then;
+
+  /// Create a copy of FAQModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? description = freezed,
+    Object? title = freezed,
+  }) {
+    return _then(_FAQModel(
+      description: freezed == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      title: freezed == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+// dart format on

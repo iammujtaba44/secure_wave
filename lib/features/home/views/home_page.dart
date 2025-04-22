@@ -5,10 +5,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:provider/provider.dart';
 import 'package:secure_wave/core/providers/app_status_provider/app_status_provider.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
+import 'package:secure_wave/features/shared/widgets/custom_dropdown_selector.dart';
+import 'package:secure_wave/features/shared/widgets/setup_section.dart';
+import 'package:secure_wave/features/shared/widgets/setup_message_widget.dart';
 import 'package:secure_wave/main.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/locator_service.dart';
-import 'package:secure_wave/core/theme/app_button.dart';
+import 'package:secure_wave/features/companies/models/companies_model.dart';
+import 'package:secure_wave/features/shared/widgets/company_selector_bottom_sheet.dart';
+import 'package:secure_wave/features/shared/widgets/company_ownership_card.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -21,45 +26,93 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _isLoading = false;
   bool _isSetupComplete = false;
+  Companies? _selectedCompany;
+  bool _isAllPermissionsGranted = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _checkPermissions();
+    });
   }
 
   Future<void> _onInit() async {
     _initNotificationService();
   }
 
+  void _checkPermissions() async {
+    _isAllPermissionsGranted = await AppStatusHandler.checkPermissions();
+    setState(() {});
+  }
+
+  void _showCompanySelector() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CompanySelectorBottomSheet(
+        onCompanySelected: (company) {
+          setState(() {
+            _selectedCompany = company;
+          });
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appStatusProvider = context.watch<AppStatusProvider>();
     return Scaffold(
-      // appBar: AppBar(
-      //   title: GestureDetector(
-      //       onTap: () async {
-      //         //TODO: Add device admin manager Route
-      //         // context.router.push(const DeviceAdminManagerRoute());
-      //       },
-      //       child: const Text('Secure Wave')),
-      //   backgroundColor: Colors.blue,
-      //   elevation: 0,
-      // ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          //TODO: Add welcome back view
-          // _HomeWelcomeBackView(appStatusProvider: appStatusProvider),
-          // const SizedBox(height: 200),
-          Center(
-            child: SetupSection(
-              isLoading: _isLoading,
-              isSetupComplete: _isSetupComplete,
-              onSetup: _onSetup,
-            ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (appStatusProvider.branchId != null && appStatusProvider.companyId != null) ...[
+                CompanyOwnershipCard(
+                  company: Companies(
+                    companyId: appStatusProvider.companyId!,
+                    branchId: appStatusProvider.branchId!,
+                    companyName: appStatusProvider.companyName!,
+                    branchName: appStatusProvider.branchName!,
+                  ),
+                )
+              ] else if (_isAllPermissionsGranted) ...[
+                Center(child: const LoadingState())
+              ] else ...[
+                SetupMessageWidget(
+                  isLoading: _isLoading,
+                  hasCompanySelected: _selectedCompany != null,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: CustomDropdownSelector(
+                    label: _selectedCompany != null
+                        ? '${_selectedCompany!.companyName} - ${_selectedCompany!.branchName}'
+                        : 'Select Company & Branch',
+                    onTap: _showCompanySelector,
+                    isSelected: _selectedCompany != null,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (_selectedCompany != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SetupSection(
+                      isLoading: _isLoading,
+                      isSetupComplete: _isSetupComplete,
+                      onSetup: () async {
+                        _onSetup();
+                      },
+                    ),
+                  ),
+              ],
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -95,7 +148,7 @@ class _HomePageState extends State<HomePage> {
     try {
       await AppStatusHandler.setAdminRestrictions();
       await _onInit();
-      context.read<AppStatusProvider>().initializeStatusListener();
+      context.read<AppStatusProvider>().initializeStatusListener(company: _selectedCompany);
       context.read<AppStatusProvider>().initializeAndStoreToken();
       setState(() {
         _isLoading = false;
@@ -108,105 +161,5 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
       });
     }
-  }
-}
-
-class _HomeWelcomeBackView extends StatelessWidget {
-  const _HomeWelcomeBackView({required this.appStatusProvider});
-
-  final AppStatusProvider appStatusProvider;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () {},
-            child: CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.blue,
-              child: Icon(Icons.person, color: Colors.white, size: 32),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            spacing: 4,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Welcome Back ',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                appStatusProvider.userName,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SetupSection extends StatelessWidget {
-  const SetupSection(
-      {super.key, required this.isLoading, required this.isSetupComplete, required this.onSetup});
-  final bool isLoading;
-  final bool isSetupComplete;
-  final void Function() onSetup;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        AppButton(
-          text: 'Setup Device',
-          type: ButtonType.secondary,
-          onPressed: () => onSetup.call(),
-        ),
-        const SizedBox(height: 20),
-        if (isLoading)
-          const SizedBox(
-            width: 40,
-            height: 40,
-            child: CircularProgressIndicator(),
-          ),
-        if (isSetupComplete) ...[
-          const Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 48,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Device successfully set up!',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      ],
-    );
   }
 }

@@ -6,14 +6,14 @@ part of 'support_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SupportModelImpl _$$SupportModelImplFromJson(Map<String, dynamic> json) =>
-    _$SupportModelImpl(
+_SupportModel _$SupportModelFromJson(Map<String, dynamic> json) =>
+    _SupportModel(
       contact: json['contact'] as String?,
       title: json['title'] as String?,
       description: json['description'] as String?,
     );
 
-Map<String, dynamic> _$$SupportModelImplToJson(_$SupportModelImpl instance) =>
+Map<String, dynamic> _$SupportModelToJson(_SupportModel instance) =>
     <String, dynamic>{
       'contact': instance.contact,
       'title': instance.title,

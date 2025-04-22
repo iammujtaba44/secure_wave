@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,89 +10,65 @@ part of 'support_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-SupportModel _$SupportModelFromJson(Map<String, dynamic> json) {
-  return _SupportModel.fromJson(json);
-}
 
 /// @nodoc
 mixin _$SupportModel {
-  String? get contact => throw _privateConstructorUsedError;
-  String? get title => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
+  String? get contact;
+  String? get title;
+  String? get description;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $SupportModelCopyWith<SupportModel> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $SupportModelCopyWith<$Res> {
-  factory $SupportModelCopyWith(
-          SupportModel value, $Res Function(SupportModel) then) =
-      _$SupportModelCopyWithImpl<$Res, SupportModel>;
-  @useResult
-  $Res call({String? contact, String? title, String? description});
-}
-
-/// @nodoc
-class _$SupportModelCopyWithImpl<$Res, $Val extends SupportModel>
-    implements $SupportModelCopyWith<$Res> {
-  _$SupportModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of SupportModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $SupportModelCopyWith<SupportModel> get copyWith =>
+      _$SupportModelCopyWithImpl<SupportModel>(
+          this as SupportModel, _$identity);
+
+  /// Serializes this SupportModel to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? contact = freezed,
-    Object? title = freezed,
-    Object? description = freezed,
-  }) {
-    return _then(_value.copyWith(
-      contact: freezed == contact
-          ? _value.contact
-          : contact // ignore: cast_nullable_to_non_nullable
-              as String?,
-      title: freezed == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String?,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SupportModel &&
+            (identical(other.contact, contact) || other.contact == contact) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.description, description) ||
+                other.description == description));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, contact, title, description);
+
+  @override
+  String toString() {
+    return 'SupportModel(contact: $contact, title: $title, description: $description)';
   }
 }
 
 /// @nodoc
-abstract class _$$SupportModelImplCopyWith<$Res>
-    implements $SupportModelCopyWith<$Res> {
-  factory _$$SupportModelImplCopyWith(
-          _$SupportModelImpl value, $Res Function(_$SupportModelImpl) then) =
-      __$$SupportModelImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $SupportModelCopyWith<$Res> {
+  factory $SupportModelCopyWith(
+          SupportModel value, $Res Function(SupportModel) _then) =
+      _$SupportModelCopyWithImpl;
   @useResult
   $Res call({String? contact, String? title, String? description});
 }
 
 /// @nodoc
-class __$$SupportModelImplCopyWithImpl<$Res>
-    extends _$SupportModelCopyWithImpl<$Res, _$SupportModelImpl>
-    implements _$$SupportModelImplCopyWith<$Res> {
-  __$$SupportModelImplCopyWithImpl(
-      _$SupportModelImpl _value, $Res Function(_$SupportModelImpl) _then)
-      : super(_value, _then);
+class _$SupportModelCopyWithImpl<$Res> implements $SupportModelCopyWith<$Res> {
+  _$SupportModelCopyWithImpl(this._self, this._then);
 
+  final SupportModel _self;
+  final $Res Function(SupportModel) _then;
+
+  /// Create a copy of SupportModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -99,17 +76,17 @@ class __$$SupportModelImplCopyWithImpl<$Res>
     Object? title = freezed,
     Object? description = freezed,
   }) {
-    return _then(_$SupportModelImpl(
+    return _then(_self.copyWith(
       contact: freezed == contact
-          ? _value.contact
+          ? _self.contact
           : contact // ignore: cast_nullable_to_non_nullable
               as String?,
       title: freezed == title
-          ? _value.title
+          ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String?,
       description: freezed == description
-          ? _value.description
+          ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
@@ -118,11 +95,10 @@ class __$$SupportModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$SupportModelImpl implements _SupportModel {
-  const _$SupportModelImpl({this.contact, this.title, this.description});
-
-  factory _$SupportModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SupportModelImplFromJson(json);
+class _SupportModel implements SupportModel {
+  const _SupportModel({this.contact, this.title, this.description});
+  factory _SupportModel.fromJson(Map<String, dynamic> json) =>
+      _$SupportModelFromJson(json);
 
   @override
   final String? contact;
@@ -131,57 +107,85 @@ class _$SupportModelImpl implements _SupportModel {
   @override
   final String? description;
 
+  /// Create a copy of SupportModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'SupportModel(contact: $contact, title: $title, description: $description)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$SupportModelCopyWith<_SupportModel> get copyWith =>
+      __$SupportModelCopyWithImpl<_SupportModel>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$SupportModelToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SupportModelImpl &&
+            other is _SupportModel &&
             (identical(other.contact, contact) || other.contact == contact) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
                 other.description == description));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, contact, title, description);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$SupportModelImplCopyWith<_$SupportModelImpl> get copyWith =>
-      __$$SupportModelImplCopyWithImpl<_$SupportModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SupportModelImplToJson(
-      this,
-    );
+  String toString() {
+    return 'SupportModel(contact: $contact, title: $title, description: $description)';
   }
 }
 
-abstract class _SupportModel implements SupportModel {
-  const factory _SupportModel(
-      {final String? contact,
-      final String? title,
-      final String? description}) = _$SupportModelImpl;
-
-  factory _SupportModel.fromJson(Map<String, dynamic> json) =
-      _$SupportModelImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$SupportModelCopyWith<$Res>
+    implements $SupportModelCopyWith<$Res> {
+  factory _$SupportModelCopyWith(
+          _SupportModel value, $Res Function(_SupportModel) _then) =
+      __$SupportModelCopyWithImpl;
   @override
-  String? get contact;
-  @override
-  String? get title;
-  @override
-  String? get description;
-  @override
-  @JsonKey(ignore: true)
-  _$$SupportModelImplCopyWith<_$SupportModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @useResult
+  $Res call({String? contact, String? title, String? description});
 }
+
+/// @nodoc
+class __$SupportModelCopyWithImpl<$Res>
+    implements _$SupportModelCopyWith<$Res> {
+  __$SupportModelCopyWithImpl(this._self, this._then);
+
+  final _SupportModel _self;
+  final $Res Function(_SupportModel) _then;
+
+  /// Create a copy of SupportModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? contact = freezed,
+    Object? title = freezed,
+    Object? description = freezed,
+  }) {
+    return _then(_SupportModel(
+      contact: freezed == contact
+          ? _self.contact
+          : contact // ignore: cast_nullable_to_non_nullable
+              as String?,
+      title: freezed == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+// dart format on

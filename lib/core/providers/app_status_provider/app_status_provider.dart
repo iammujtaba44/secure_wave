@@ -14,6 +14,7 @@ import 'package:secure_wave/core/services/device_info_service.dart';
 import 'package:secure_wave/core/services/location_service.dart/i_location_service.dart';
 import 'package:secure_wave/core/services/location_service.dart/location_service.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
+import 'package:secure_wave/features/companies/models/companies_model.dart';
 import 'package:secure_wave/firebase_options.dart';
 import 'package:secure_wave/routes/app_routes.dart';
 import 'package:secure_wave/core/services/database_service/i_database_service.dart';
@@ -67,17 +68,22 @@ class AppStatusProvider extends ChangeNotifier {
 
   AppStatusModel _appStatusModel = AppStatusModel();
 
-  String get userName => (_appStatusModel.displayName?.isNotEmpty ?? false)
-      ? _appStatusModel.displayName ?? 'New User'
-      : 'New User';
+  String get userName =>
+      (_appStatusModel.displayName?.isNotEmpty ?? false) ? _appStatusModel.displayName ?? 'New User' : 'New User';
 
-  String? get duePaymentAmount => (_appStatusModel.paymentDueAmount?.isNotEmpty ?? false)
-      ? _appStatusModel.paymentDueAmount ?? ''
-      : null;
+  String? get duePaymentAmount =>
+      (_appStatusModel.paymentDueAmount?.isNotEmpty ?? false) ? _appStatusModel.paymentDueAmount ?? '' : null;
 
-  String? get duePaymentDate => (_appStatusModel.paymentDueDate?.isNotEmpty ?? false)
-      ? _appStatusModel.paymentDueDate ?? ''
-      : null;
+  String? get duePaymentDate =>
+      (_appStatusModel.paymentDueDate?.isNotEmpty ?? false) ? _appStatusModel.paymentDueDate ?? '' : null;
+
+  String? get companyId => _appStatusModel.companyId?.isNotEmpty ?? false ? _appStatusModel.companyId : null;
+
+  String? get branchId => _appStatusModel.branchId?.isNotEmpty ?? false ? _appStatusModel.branchId : null;
+
+  String? get companyName => _appStatusModel.companyName?.isNotEmpty ?? false ? _appStatusModel.companyName : null;
+
+  String? get branchName => _appStatusModel.branchName?.isNotEmpty ?? false ? _appStatusModel.branchName : null;
 
   static const platform = MethodChannel('secure_wave/app_control');
 
@@ -88,17 +94,17 @@ class AppStatusProvider extends ChangeNotifier {
     }
   }
 
-  void initializeStatusListener() async {
+  void initializeStatusListener({Companies? company}) async {
     _statusSubscription?.cancel();
     _statusSubscription = _databaseService
         .streamData('Devices/${await _deviceInfoService.userId()}')
-        .listen(_handleStatusUpdate);
+        .listen((statusData) => _handleStatusUpdate(statusData, company: company));
   }
 
-  void _handleStatusUpdate(Map<String, dynamic> statusData) {
+  void _handleStatusUpdate(Map<String, dynamic> statusData, {Companies? company}) {
     final newStatus = AppStatus.fromString(statusData['app_status']);
     if (newStatus.isUserNotFound) {
-      _initializeNewUser();
+      _initializeNewUser(company: company);
       notifyListeners();
       return;
     }
@@ -118,7 +124,7 @@ class AppStatusProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _initializeNewUser() async {
+  Future<void> _initializeNewUser({Companies? company}) async {
     try {
       final deviceId = await _deviceInfoService.userId();
       final deviceModel = await _deviceInfoService.deviceInfo();
@@ -136,6 +142,10 @@ class AppStatusProvider extends ChangeNotifier {
         "display_name": "New User",
         "payment_due_amount": "",
         "payment_due_date": "",
+        "company_id": company?.companyId,
+        "branch_id": company?.branchId,
+        "company_name": company?.companyName,
+        "branch_name": company?.branchName,
       };
 
       await _databaseService.setData('Devices/$deviceId', initialData);
@@ -236,8 +246,7 @@ class AppStatusProvider extends ChangeNotifier {
 
       if (fcmToken != null) {
         // Check if user exists before updating FCM token
-        final userData =
-            await _databaseService.getData('Devices/${await _deviceInfoService.userId()}');
+        final userData = await _databaseService.getData('Devices/${await _deviceInfoService.userId()}');
         log('token: $userData');
         if (userData.isNotEmpty) {
           await _databaseService.updateData(

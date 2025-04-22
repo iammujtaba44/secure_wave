@@ -36,4 +36,6 @@ abstract class IDatabaseService {
   Future<void> removeData(String path);
 
   Stream<Map<String, dynamic>> streamData(String path);
+
+  Future<void> setDataWithAutoId(String path, Map<String, dynamic> data);
 }

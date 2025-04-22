@@ -11,4 +11,18 @@ class FAQModel with _$FAQModel {
   }) = _FAQModel;
 
   factory FAQModel.fromJson(Map<String, dynamic> json) => _$FAQModelFromJson(json);
+
+  @override
+  // TODO: implement description
+  String? get description => throw UnimplementedError();
+
+  @override
+  // TODO: implement title
+  String? get title => throw UnimplementedError();
+
+  @override
+  Map<String, dynamic> toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
 }

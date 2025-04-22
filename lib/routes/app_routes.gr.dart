@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -23,10 +24,7 @@ import 'package:secure_wave/features/notification_detail/views/notification_deta
 /// [_i1.DeviceAdminManagerPage]
 class DeviceAdminManagerRoute extends _i5.PageRouteInfo<void> {
   const DeviceAdminManagerRoute({List<_i5.PageRouteInfo>? children})
-      : super(
-          DeviceAdminManagerRoute.name,
-          initialChildren: children,
-        );
+    : super(DeviceAdminManagerRoute.name, initialChildren: children);
 
   static const String name = 'DeviceAdminManagerRoute';
 
@@ -42,10 +40,7 @@ class DeviceAdminManagerRoute extends _i5.PageRouteInfo<void> {
 /// [_i2.EmergencyPage]
 class EmergencyRoute extends _i5.PageRouteInfo<void> {
   const EmergencyRoute({List<_i5.PageRouteInfo>? children})
-      : super(
-          EmergencyRoute.name,
-          initialChildren: children,
-        );
+    : super(EmergencyRoute.name, initialChildren: children);
 
   static const String name = 'EmergencyRoute';
 
@@ -61,10 +56,7 @@ class EmergencyRoute extends _i5.PageRouteInfo<void> {
 /// [_i3.HomePage]
 class HomeRoute extends _i5.PageRouteInfo<void> {
   const HomeRoute({List<_i5.PageRouteInfo>? children})
-      : super(
-          HomeRoute.name,
-          initialChildren: children,
-        );
+    : super(HomeRoute.name, initialChildren: children);
 
   static const String name = 'HomeRoute';
 
@@ -85,13 +77,13 @@ class NotificationDetailRoute
     required _i7.NotificationResult notification,
     List<_i5.PageRouteInfo>? children,
   }) : super(
-          NotificationDetailRoute.name,
-          args: NotificationDetailRouteArgs(
-            key: key,
-            notification: notification,
-          ),
-          initialChildren: children,
-        );
+         NotificationDetailRoute.name,
+         args: NotificationDetailRouteArgs(
+           key: key,
+           notification: notification,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'NotificationDetailRoute';
 
@@ -108,10 +100,7 @@ class NotificationDetailRoute
 }
 
 class NotificationDetailRouteArgs {
-  const NotificationDetailRouteArgs({
-    this.key,
-    required this.notification,
-  });
+  const NotificationDetailRouteArgs({this.key, required this.notification});
 
   final _i6.Key? key;
 

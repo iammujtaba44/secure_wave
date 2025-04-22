@@ -7,6 +7,9 @@ import 'package:secure_wave/core/services/device_info_service.dart';
 import 'package:secure_wave/core/services/location_service.dart/i_location_service.dart';
 import 'package:secure_wave/core/services/location_service.dart/location_service.dart';
 import 'package:secure_wave/core/services/notification_service/notification_service.dart';
+import 'package:secure_wave/features/companies/providers/company_provider.dart';
+import 'package:secure_wave/features/companies/repositories/company_repository.dart';
+import 'package:secure_wave/features/companies/usecases/get_companies_usecase.dart';
 import 'package:secure_wave/features/emergency/providers/emergency_provider.dart';
 import 'package:secure_wave/firebase_options.dart';
 import 'package:secure_wave/core/providers/app_providers.dart';
@@ -44,6 +47,12 @@ class LocatorService implements ILocatorService {
     locator.registerLazySingleton<INotificationService>(() => NotificationService());
     locator.registerLazySingleton<IDeviceInfoService>(() => DeviceInfoService());
     locator.registerLazySingleton<ILocationService>(() => LocationService());
+
+    // Register company-related services
+    locator.registerLazySingleton<ICompanyRepository>(() => CompanyRepository());
+    locator.registerLazySingleton<GetCompaniesUseCase>(
+      () => GetCompaniesUseCase(locator.get<ICompanyRepository>()),
+    );
   }
 
   static void _setupProviders() {
@@ -66,6 +75,11 @@ class LocatorService implements ILocatorService {
       () => EmergencyProvider(
         databaseService: locator.get(),
       ),
+    );
+
+    // Register company provider
+    locator.registerLazySingleton<CompanyProvider>(
+      () => CompanyProvider(locator.get<GetCompaniesUseCase>()),
     );
   }
 

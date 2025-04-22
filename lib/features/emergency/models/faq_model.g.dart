@@ -6,14 +6,12 @@ part of 'faq_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$FAQModelImpl _$$FAQModelImplFromJson(Map<String, dynamic> json) =>
-    _$FAQModelImpl(
+_FAQModel _$FAQModelFromJson(Map<String, dynamic> json) => _FAQModel(
       description: json['description'] as String?,
       title: json['title'] as String?,
     );
 
-Map<String, dynamic> _$$FAQModelImplToJson(_$FAQModelImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$FAQModelToJson(_FAQModel instance) => <String, dynamic>{
       'description': instance.description,
       'title': instance.title,
     };

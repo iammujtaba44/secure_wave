@@ -107,6 +107,15 @@ class DatabaseService implements IDatabaseService {
   }
 
   @override
+  Future<void> setDataWithAutoId(String path, Map<String, dynamic> data) async {
+    try {
+      await _dbRef.child(path).push().set(data);
+    } catch (e) {
+      throw Exception('Failed to set data: $e');
+    }
+  }
+
+  @override
   Future<Map<String, dynamic>> getData(String path) async {
     try {
       final data = await _dbRef.child(path).get();
